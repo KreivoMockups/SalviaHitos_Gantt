@@ -130,7 +130,7 @@ const DASHBOARD_DATA = {
             "id": "H01",
             "name": "MODULO SEGUIMIENTO",
             "date": "2026-06-18",
-            "completion": 45,
+            "completion": 100,
             "signature": [
                 0,
                 0,
@@ -160,7 +160,7 @@ const DASHBOARD_DATA = {
                 1,
                 0,
                 1,
-                0,
+                1,
                 1,
                 1,
                 1,
@@ -263,7 +263,7 @@ const DASHBOARD_DATA = {
             "id": "H02",
             "name": "MODULO FEMINICIDIO",
             "date": "2026-07-15",
-            "completion": 15,
+            "completion": 55,
             "signature": [
                 0,
                 0,
@@ -523,7 +523,7 @@ const DASHBOARD_DATA = {
                 0
             ],
             "details": "Modulo Web ASP: variables de riesgo documentadas (T-203). Pendiente construccion e integracion con core SALVIA.",
-            "responsable": "Jorge Bejarano / Juan Buitrago"
+            "responsable": "Santiago Ramos / Juan Buitrago"
         },
         {
             "id": "H04",
@@ -789,13 +789,13 @@ const DASHBOARD_DATA = {
                 0
             ],
             "details": "App MASP: interfaz segura y push notifications en diseno (T-204, T-205). Integracion con core SALVIA planeada. Desarrollo nativo iOS/Android previsto Jun-Ago 2026.",
-            "responsable": "Andres Ascencio"
+            "responsable": "Santiago Ramos"
         },
         {
             "id": "H06",
             "name": "ARQUITECTURA EAV-DAG",
             "date": "2026-05-14",
-            "completion": 90,
+            "completion": 100,
             "signature": [
                 0,
                 0,
@@ -922,13 +922,13 @@ const DASHBOARD_DATA = {
                 0
             ],
             "details": "Nueva arquitectura EAV-DAG disenada. Scripts y diccionario de datos preliminar entregados. Migracion desde modelo SOG en ejecucion (T-401, T-408). Solucion transitoria Zenkit desplegada.",
-            "responsable": "Andres Roldan"
+            "responsable": "Andres Posada / Andres Ascencio"
         },
         {
             "id": "H07",
             "name": "GOBERNANZA Y GESTION DEL PROYECTO",
             "date": "2026-10-30",
-            "completion": 65,
+            "completion": 95,
             "signature": [
                 1,
                 1,
@@ -938,7 +938,7 @@ const DASHBOARD_DATA = {
                 1,
                 1,
                 1,
-                0,
+                1,
                 1,
                 0,
                 0,
@@ -953,25 +953,25 @@ const DASHBOARD_DATA = {
                 0,
                 0,
                 1,
-                0,
-                0,
-                0,
-                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
                 1,
                 0,
                 0,
-                0,
                 1,
-                0,
                 1,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
+                1,
+                1,
                 0,
                 0,
                 0,
@@ -1061,7 +1061,7 @@ const DASHBOARD_DATA = {
             "id": "H08",
             "name": "QA Y PRUEBAS",
             "date": "2026-08-31",
-            "completion": 25,
+            "completion": 65,
             "signature": [
                 0,
                 0,
@@ -1102,11 +1102,11 @@ const DASHBOARD_DATA = {
                 0,
                 0,
                 1,
+                1,
+                1,
                 0,
-                0,
-                0,
-                0,
-                0,
+                1,
+                1,
                 1,
                 0,
                 1,
@@ -1188,13 +1188,13 @@ const DASHBOARD_DATA = {
                 0
             ],
             "details": "Plan de pruebas en definicion. UAT programado para Julio-Agosto 2026. Jose Vega (Analista de Pruebas) ingresa en fase posterior.",
-            "responsable": "Jose Vega"
+            "responsable": "Brayan Marbello"
         },
         {
             "id": "H09",
             "name": "DESPLIEGUE EN PRODUCCION",
             "date": "2026-10-31",
-            "completion": 0,
+            "completion": 70,
             "signature": [
                 0,
                 0,
@@ -1236,13 +1236,13 @@ const DASHBOARD_DATA = {
                 0,
                 1,
                 1,
-                0,
-                0,
-                0,
                 1,
                 0,
-                0,
-                0,
+                1,
+                1,
+                1,
+                1,
+                1,
                 1,
                 1,
                 0,
@@ -1320,14 +1320,14 @@ const DASHBOARD_DATA = {
                 0,
                 0
             ],
-            "details": "Migracion a RedHat programada para Sep-Oct 2026. Paso a produccion oficial SALVIA y App MASP al cierre del contrato.",
-            "responsable": "Andres Roldan / Andres Ascencio"
+            "details": "Migracion a programada para Sep-Oct 2026. Paso a produccion oficial SALVIA y App MASP al cierre del contrato.",
+            "responsable": "Camilo Arias"
         },
         {
             "id": "H10",
             "name": "TRANSFERENCIA DE CONOCIMIENTO",
             "date": "2026-10-31",
-            "completion": 0,
+            "completion": 40,
             "signature": [
                 0,
                 0,
@@ -1454,7 +1454,7 @@ const DASHBOARD_DATA = {
                 0
             ],
             "details": "Plan de apropiacion en construccion. Vicente Moreno (Gestor del Cambio) ingresa en fase posterior.",
-            "responsable": "Vicente Moreno"
+            "responsable": "Andres Ascencio / Brayan Marbello"
         },
         {
             "id": "H11",
