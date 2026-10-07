@@ -128,6 +128,13 @@ function selectMilestone(idx) {
     
     document.getElementById('ficha-id').innerText = milestone.id;
     document.getElementById('ficha-title').innerText = milestone.name;
+    const split = document.getElementById('ficha-split');
+    if (split) {
+        const partes = [];
+        if (milestone.entendimiento !== undefined) partes.push(`Entendimiento ${milestone.entendimiento}%`);
+        if (milestone.construccion !== undefined) partes.push(`Construcción y cierre ${milestone.construccion}%`);
+        split.innerText = partes.join('  ·  ');
+    }
     document.getElementById('ficha-date').innerText = `Fecha objetivo: ${milestone.date}`;
     document.getElementById('ficha-resp').innerText = `Responsable: ${milestone.responsable}`;
     
