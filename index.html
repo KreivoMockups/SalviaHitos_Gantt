@@ -15,7 +15,11 @@
     .grid-row-dot { height: 40px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
     .upset-matrix-circle { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #475569; background: #1B2A4A; position: relative; z-index: 10; margin: 0 auto;}
-    .upset-matrix-circle.active { background-color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(200, 92, 198, 0.6); }
+    .upset-matrix-circle.active, .upset-matrix-circle.done { background-color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(200, 92, 198, 0.6); }
+    .upset-matrix-circle.progress { border-color: var(--accent); background: linear-gradient(90deg, var(--accent) 50%, #1B2A4A 50%); }
+    .upset-matrix-circle.planned { border-color: var(--accent); background: #1B2A4A; }
+    .legend-item { display: inline-flex; align-items: center; gap: 8px; }
+    .legend-item .upset-matrix-circle { margin: 0; }
     .upset-line { width: 2px; background-color: var(--accent); position: absolute; left: 50%; transform: translateX(-50%); z-index: 1; }
 
     .bar-container { height: 140px; }
@@ -42,12 +46,19 @@
         <header class="mb-8 border-b border-slate-800 pb-6 flex justify-between items-end">
             <div>
                 <h1 class="text-3xl font-bold tracking-tight text-white uppercase">SALVIA - Plan de trabajo y seguimiento relacionado con los Hitos de Proyecto</h1>
-                <p class="text-slate-400 mt-2 tracking-wider text-sm uppercase font-mono">Control de Avance Contractual y EDT: 47%</p>
+                <p class="text-slate-400 mt-2 tracking-wider text-sm uppercase font-mono">Control de Avance Contractual y EDT: <span id="edt-avance">43%</span></p>
             </div>
             <div class="text-right">
-                <span class="px-3 py-1 bg-slate-800 text-purple-500 text-xs rounded-full border border-purple-500/30 font-bold uppercase">actualizado el 14/julio/2026</span>
+                <span class="px-3 py-1 bg-slate-800 text-purple-500 text-xs rounded-full border border-purple-500/30 font-bold uppercase whitespace-nowrap" id="fecha-actualizacion">actualizado el 6/octubre/2026</span>
             </div>
         </header>
+
+        <div class="flex flex-wrap gap-x-8 gap-y-2 mb-6 text-xs text-slate-400 uppercase tracking-wider">
+            <span class="legend-item"><span class="upset-matrix-circle done"></span>Completado</span>
+            <span class="legend-item"><span class="upset-matrix-circle progress"></span>En curso</span>
+            <span class="legend-item"><span class="upset-matrix-circle planned"></span>Pendiente (en el plan)</span>
+            <span class="legend-item"><span class="upset-matrix-circle"></span>No aplica al hito</span>
+        </div>
 
         <div class="flex">
             <div id="expected-labels" class="w-1/3 pt-[193px] pr-6 text-right flex flex-col"></div>

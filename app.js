@@ -7,7 +7,20 @@ function getInfo(text) {
     return { id, level };
 }
 
+const STATE_CLASS = { 1: 'planned', 2: 'progress', 3: 'done' };
+const STATE_NAME = { 1: 'Pendiente', 2: 'En curso', 3: 'Completado' };
+
+function renderMeta() {
+    const meta = DASHBOARD_DATA.meta || {};
+    const edt = document.getElementById('edt-avance');
+    const upd = document.getElementById('fecha-actualizacion');
+    if (edt && meta.edt !== undefined) edt.innerText = `${meta.edt}%`;
+    if (upd && meta.updated) upd.innerText = `actualizado el ${meta.updated}`;
+}
+
 function renderDashboard() {
+    renderMeta();
+    const progress = DASHBOARD_DATA.itemProgress || [];
     const expectedLabels = document.getElementById('expected-labels');
     const barsContainer = document.getElementById('bars-container');
     const matrixContainer = document.getElementById('matrix-container');
@@ -20,7 +33,8 @@ function renderDashboard() {
         div.style.height = "40px";
         
         const icon = level < 3 ? `<span class="ml-2 opacity-40 text-[9px] font-bold">${level === 1 ? '⊕' : '○'}</span>` : '';
-        div.innerHTML = `<span class="${level === 1 ? 'text-purple-500 font-bold' : 'text-slate-400'}">${item}</span> ${icon}`;
+        const pct = progress[index] !== undefined ? `<span class="ml-2 text-[10px] font-mono text-slate-500 w-8 shrink-0 text-right">${progress[index]}%</span>` : '';
+        div.innerHTML = `<span class="${level === 1 ? 'text-purple-500 font-bold' : 'text-slate-400'}">${item}</span> ${pct} ${icon}`;
         
         div.onclick = () => toggleLevel(id, level);
         div.setAttribute('data-id', id);
@@ -61,7 +75,9 @@ function renderDashboard() {
             const { level } = getInfo(DASHBOARD_DATA.expectedItems[sIdx]);
             if (level > 1) rowWrap.style.display = "none";
             const circle = document.createElement('div');
-            circle.className = `upset-matrix-circle ${active ? 'active' : ''}`;
+            // 0 no pertenece, 1 pendiente, 2 en curso, 3 completado
+            circle.className = `upset-matrix-circle ${STATE_CLASS[active] || ''}`;
+            if (STATE_NAME[active]) circle.title = `${milestone.id} · ${STATE_NAME[active]}`;
             rowWrap.appendChild(circle);
             col.appendChild(rowWrap);
         });
@@ -112,11 +128,11 @@ function selectMilestone(idx) {
     
     document.getElementById('ficha-id').innerText = milestone.id;
     document.getElementById('ficha-title').innerText = milestone.name;
-    document.getElementById('ficha-date').innerText = `Corte: ${milestone.date}`;
+    document.getElementById('ficha-date').innerText = `Fecha objetivo: ${milestone.date}`;
     document.getElementById('ficha-resp').innerText = `Responsable: ${milestone.responsable}`;
     
     // CORRECCIÓN: Usamos text-purple-400 para el Oro
-    const formattedDetails = milestone.details.replace(/(Arquitectura:|Riesgo:|Estrategia:|MVP:|Macro:|Cambio Estratégico:|Avatar:|Plan B:)/g, '<strong class="text-purple-400">$1</strong>');
+    const formattedDetails = milestone.details.replace(/(Avance:|Pendiente:|Decisión:|Nota:|Arquitectura:|Riesgo:|Estrategia:|MVP:|Macro:|Cambio Estratégico:|Avatar:|Plan B:)/g, '<strong class="text-purple-400">$1</strong>');
     document.getElementById('ficha-details').innerHTML = formattedDetails;
 }
 

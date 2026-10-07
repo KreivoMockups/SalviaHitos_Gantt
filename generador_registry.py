@@ -1,11 +1,19 @@
 import pandas as pd
 import json
+from datetime import date
 
 # ==========================================
 # CONFIGURACIÓN
 # ==========================================
 ARCHIVO_EXCEL = 'Datos_Malla_SALVIA.xlsx'
 ARCHIVO_SALIDA = 'registry.js'
+
+MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+         'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+
+def fecha_actualizacion():
+    hoy = date.today()
+    return f"{hoy.day}/{MESES[hoy.month - 1]}/{hoy.year}"
 
 def generar_registry():
     print("Iniciando conversión de Excel a JavaScript...")
@@ -27,7 +35,8 @@ def generar_registry():
         columnas_hitos = [col for col in df_matriz.columns if col != 'ID']
 
         for hito_id in columnas_hitos:
-            # Extraer la matriz binaria (1s y 0s) para este hito
+            # Estado de cada actividad en este hito:
+            # 0 no pertenece, 1 pendiente, 2 en curso, 3 completado
             signature = df_matriz[hito_id].fillna(0).astype(int).tolist()
             
             # Buscar el detalle de este hito en la hoja de Actas
@@ -67,13 +76,29 @@ def generar_registry():
                 "responsable": responsable
             })
 
-        # 4. Construir el objeto JSON final
+        # 4. Avance por actividad y avance global de la EDT (si la hoja Plan trae Avance_%)
+        item_progress = []
+        meta = {"updated": fecha_actualizacion()}
+        if 'Avance_%' in df_plan.columns:
+            avances = pd.to_numeric(df_plan['Avance_%'], errors='coerce')
+            if avances.isna().any():
+                print("Aviso: hay celdas de Avance_% sin calcular. Abre y guarda el Excel antes de generar.")
+            avances = avances.fillna(0)
+            item_progress = [int(round(a * 100)) for a in avances.tolist()]
+            # Las hojas de la EDT son los ID de tercer nivel (dos puntos: 1.1.1)
+            hojas = df_plan['ID'].astype(str).str.count(r'\.') == 2
+            if hojas.any():
+                meta["edt"] = int(round(avances[hojas].mean() * 100))
+
+        # 5. Construir el objeto JSON final
         dashboard_data = {
+            "meta": meta,
             "expectedItems": expected_items,
+            "itemProgress": item_progress,
             "milestones": milestones
         }
 
-        # 5. Escribir el archivo JavaScript
+        # 6. Escribir el archivo JavaScript
         with open(ARCHIVO_SALIDA, 'w', encoding='utf-8') as f:
             f.write("/* Archivo auto-generado por Python */\n")
             f.write("const DASHBOARD_DATA = ")
