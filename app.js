@@ -160,7 +160,7 @@ function renderEtiquetas() {
         const icon = tieneHijos ? `<span class="ml-2 opacity-40 text-[9px] font-bold">${state.expandidos.has(id) ? '⊖' : (level === 1 ? '⊕' : '○')}</span>` : '';
         const p = prog[index] !== undefined ? `<span class="ml-2 text-[10px] font-mono text-slate-500 w-8 shrink-0 text-right">${prog[index]}%</span>` : '';
         const h = hrs && hrs[index][1] > 0 ? `<span class="ml-2 text-[10px] font-mono shrink-0 text-right" style="color:var(--accent2)" title="Horas del hito en el mes / acumuladas">${fmt(hrs[index][0], 0)}/${fmt(hrs[index][1], 0)} h</span>` : '';
-        div.innerHTML = `<span class="${level === 1 ? 'text-purple-500 font-bold' : 'text-slate-400'}">${esc(item)}</span> ${h} ${p} ${icon}`;
+        div.innerHTML = `<span class="${level === 1 ? 'text-purple-500 font-bold' : 'text-slate-400'}">${esc(item)}</span> ${p} ${icon}`;
         div.setAttribute('data-id', id);
         div.onclick = () => toggleLevel(id);
         cont.appendChild(div);
@@ -243,6 +243,19 @@ function selectMilestone(id) {
     render();
 }
 
+// trabajo realizado que no está (o no completo) en las horas reportadas: se muestra como evidencia
+function trabajoSinHoras(filtro) {
+    const lista = (D.extraWork || []).filter(filtro);
+    if (!lista.length) return '';
+    const fichas = lista.map(x => `<div class="border border-slate-700 rounded-lg p-3">
+        <div class="flex justify-between gap-3"><p class="text-sm font-bold text-white">${esc(x.entregable)}</p><span class="text-[10px] uppercase text-slate-400 whitespace-nowrap">${esc(x.tipo)} · ${esc(x.fecha)}</span></div>
+        <p class="text-xs mt-1" style="color:var(--accent2)">${esc(x.estado)}${x.hitos.length ? ' · ' + esc(x.hitos.join(', ')) : ''}</p>
+        <p class="text-xs text-slate-400 mt-1 leading-relaxed">${esc(x.descripcion)}</p></div>`).join('');
+    return `<h4 class="text-xs uppercase tracking-wider text-slate-400 mt-6 mb-1">Trabajo realizado sin horas registradas</h4>
+        <p class="text-[11px] text-slate-500 mb-2">Evidencia de entregables; no suma ni modifica las horas reportadas.</p>
+        <div class="space-y-2">${fichas}</div>`;
+}
+
 function renderResumenMes() {
     const m = meses[state.mes];
     const ficha = document.getElementById('ficha-tecnica');
@@ -258,6 +271,7 @@ function renderResumenMes() {
                 <td class="text-right font-mono">${d.completion} %</td></tr>`;
         }).join('');
     }).join('');
+    const extra = trabajoSinHoras(x => x.mes === m.id);
     const aspectos = (m.highlights || []).map(a => `<li class="flex gap-3"><span class="text-purple-400">●</span><span>${esc(a)}</span></li>`).join('');
     ficha.innerHTML = `
         <div class="flex justify-between items-start mb-4 border-b border-purple-900/30 pb-4 gap-6">
@@ -274,6 +288,7 @@ function renderResumenMes() {
             <div>
                 <h4 class="text-xs uppercase tracking-wider text-slate-400 mb-3">Aspectos más relevantes</h4>
                 <ul class="space-y-3 text-slate-300 leading-relaxed">${aspectos || '<li class="text-slate-500">Sin resumen registrado para este mes.</li>'}</ul>
+                ${extra}
             </div>
             <div>
                 <h4 class="text-xs uppercase tracking-wider text-slate-400 mb-1">Horas por hito</h4>
@@ -333,7 +348,8 @@ function renderFicha() {
         ${filas ? `<h4 class="text-xs uppercase tracking-wider text-slate-400 mb-1">Participación por actividad de la EDT (horas)</h4>
         <table class="hours w-full text-sm text-slate-300"><thead><tr class="text-[11px] uppercase text-slate-500">
         <th class="text-left">Actividad</th><th class="text-right">Mes</th><th class="text-right">Acumulado</th><th class="text-right">% del hito</th></tr></thead>
-        <tbody>${filas}</tbody></table>` : '<p class="text-sm text-slate-500">Este hito no tiene horas registradas hasta este mes.</p>'}`;
+        <tbody>${filas}</tbody></table>` : '<p class="text-sm text-slate-500">Este hito no tiene horas registradas hasta este mes.</p>'}
+        ${trabajoSinHoras(x => x.hitos.includes(id) && x.mes <= m.id)}`;
     document.getElementById('volver-resumen').onclick = () => selectMilestone(id);
 }
 
