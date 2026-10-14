@@ -6,29 +6,43 @@
     <title>SALVIA - Dashboard de Ejecución</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-    :root { --primary: #1a2a3a; --accent: #ba5cc8; --bg-dark: #0f172a; }
-    
-    .grid-row-label { 
-        height: 40px; display: flex; align-items: center; justify-content: flex-end; 
+    :root { --primary: #1a2a3a; --accent: #ba5cc8; --accent2: #5fb3c9; --bg-dark: #0f172a; }
+
+    .grid-row-label {
+        height: 40px; display: flex; align-items: center; justify-content: flex-end;
         line-height: 1.2; padding-top: 4px; padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     .grid-row-dot { height: 40px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-    .upset-matrix-circle { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #475569; background: #1B2A4A; position: relative; z-index: 10; margin: 0 auto;}
-    .upset-matrix-circle.active, .upset-matrix-circle.done { background-color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(200, 92, 198, 0.6); }
+    .upset-matrix-circle { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #475569; background: #1B2A4A; position: relative; z-index: 10; margin: 0 auto; }
+    .upset-matrix-circle.done { background-color: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px rgba(200, 92, 198, 0.6); }
     .upset-matrix-circle.progress { border-color: var(--accent); background: linear-gradient(90deg, var(--accent) 50%, #1B2A4A 50%); }
     .upset-matrix-circle.planned { border-color: var(--accent); background: #1B2A4A; }
+    .upset-matrix-circle.has-hours { outline: 2px solid rgba(95,179,201,0.55); outline-offset: 2px; }
+
+    .bar-container { height: 150px; }
+    .bar { width: 40px; height: 70px; background-color: #334155; position: relative; transition: all 0.3s; cursor: pointer; border-radius: 4px 4px 0 0; }
+    .bar-fill { width: 100%; position: absolute; bottom: 0; background-color: var(--accent); transition: height 0.6s ease-out; border-radius: 4px 4px 0 0; }
+    .milestone-id-label { font-size: 10px; color: #94a3b8; font-weight: bold; margin-top: 6px; }
+    .col-selected { background: rgba(186,92,200,0.08); border-radius: 6px; }
+    .group-divider { width: 1px; background: rgba(148,163,184,0.25); align-self: stretch; margin: 0 6px; }
+
+    .month-pill { padding: 6px 12px; border-radius: 999px; border: 1px solid #334155; color: #94a3b8; font-size: 12px; white-space: nowrap; cursor: pointer; transition: all 0.2s; }
+    .month-pill:hover { border-color: var(--accent); color: #e2e8f0; }
+    .month-pill.active { background: var(--accent); border-color: var(--accent); color: #0f172a; font-weight: 700; }
+    .nav-btn { width: 34px; height: 34px; border-radius: 999px; border: 1px solid #334155; color: #cbd5e1; display: inline-flex; align-items: center; justify-content: center; }
+    .nav-btn:disabled { opacity: 0.3; cursor: default; }
+    .nav-btn:not(:disabled):hover { border-color: var(--accent); }
+
+    .kpi { background: rgba(30,41,59,0.6); border: 1px solid #1e293b; border-radius: 12px; padding: 14px 16px; }
+    .meter { height: 6px; border-radius: 999px; background: #334155; overflow: hidden; margin-top: 8px; }
+    .meter > span { display: block; height: 100%; border-radius: 999px; }
+
     .legend-item { display: inline-flex; align-items: center; gap: 8px; }
     .legend-item .upset-matrix-circle { margin: 0; }
-    .upset-line { width: 2px; background-color: var(--accent); position: absolute; left: 50%; transform: translateX(-50%); z-index: 1; }
-
-    .bar-container { height: 140px; }
-    .bar { width: 40px; background-color: #334155; position: relative; transition: all 0.3s; cursor: pointer; border-radius: 4px 4px 0 0; }
-    .bar-fill { width: 100%; position: absolute; bottom: 0; background-color: var(--accent); transition: height 1s ease-out; border-radius: 4px 4px 0 0; }
-    
-    .milestone-id-label { font-size: 10px; color: #94a3b8; font-weight: bold; margin-top: 8px; }
     .custom-scrollbar::-webkit-scrollbar { height: 8px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    table.hours td, table.hours th { padding: 6px 10px; border-bottom: 1px solid rgba(148,163,184,0.12); }
     </style>
 
 <!--[if gte mso 9]><xml>
@@ -42,50 +56,61 @@
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen p-8 font-sans overflow-x-hidden selection:bg-slate-500/30">
     <div class="max-w-7xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-10">
-        
-        <header class="mb-8 border-b border-slate-800 pb-6 flex justify-between items-end">
+
+        <header class="mb-6 border-b border-slate-800 pb-6 flex justify-between items-end gap-6">
             <div>
                 <h1 class="text-3xl font-bold tracking-tight text-white uppercase">SALVIA - Plan de trabajo y seguimiento relacionado con los Hitos de Proyecto</h1>
-                <p class="text-slate-400 mt-2 tracking-wider text-sm uppercase font-mono">Control de Avance Contractual y EDT: <span id="edt-avance">43%</span></p>
+                <p class="text-slate-400 mt-2 tracking-wider text-sm uppercase font-mono">Control de Avance Contractual y EDT: <span id="edt-avance">44%</span> <span id="edt-mes" class="text-slate-500"></span></p>
             </div>
             <div class="text-right">
-                <span class="px-3 py-1 bg-slate-800 text-purple-500 text-xs rounded-full border border-purple-500/30 font-bold uppercase whitespace-nowrap" id="fecha-actualizacion">actualizado el 6/octubre/2026</span>
+                <span class="px-3 py-1 bg-slate-800 text-purple-500 text-xs rounded-full border border-purple-500/30 font-bold uppercase whitespace-nowrap" id="fecha-actualizacion">actualizado el 13/octubre/2026</span>
             </div>
         </header>
+
+        <!-- Navegación por mes -->
+        <section class="mb-6">
+            <div class="flex items-center gap-3">
+                <button id="mes-anterior" class="nav-btn" aria-label="Mes anterior">&#8249;</button>
+                <div id="month-pills" class="flex gap-2 overflow-x-auto custom-scrollbar pb-1"></div>
+                <button id="mes-siguiente" class="nav-btn" aria-label="Mes siguiente">&#8250;</button>
+            </div>
+            <p id="mes-nota" class="text-xs text-slate-500 mt-2"></p>
+        </section>
+
+        <!-- Horas -->
+        <section class="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-8">
+            <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-3" id="kpis"></div>
+            <div class="lg:col-span-2 kpi">
+                <div class="flex justify-between items-baseline mb-1">
+                    <p class="text-xs uppercase tracking-wider text-slate-400">Horas por mes y acumulado</p>
+                    <p class="text-[11px] text-slate-500"><span style="color:var(--accent)">&#9632;</span> Bolsa 1 &nbsp; <span style="color:var(--accent2)">&#9632;</span> Bolsa 2 &nbsp; <span class="text-slate-300">&#8212;</span> acumulado</p>
+                </div>
+                <div id="hours-chart"></div>
+            </div>
+        </section>
 
         <div class="flex flex-wrap gap-x-8 gap-y-2 mb-6 text-xs text-slate-400 uppercase tracking-wider">
             <span class="legend-item"><span class="upset-matrix-circle done"></span>Completado</span>
             <span class="legend-item"><span class="upset-matrix-circle progress"></span>En curso</span>
             <span class="legend-item"><span class="upset-matrix-circle planned"></span>Pendiente (en el plan)</span>
             <span class="legend-item"><span class="upset-matrix-circle"></span>No aplica al hito</span>
+            <span class="legend-item"><span class="upset-matrix-circle planned has-hours"></span>Con horas del hito seleccionado</span>
         </div>
 
         <div class="flex">
-            <div id="expected-labels" class="w-1/3 pt-[193px] pr-6 text-right flex flex-col"></div>
-
+            <div id="expected-labels" class="w-1/3 pr-6 text-right flex flex-col"></div>
             <div class="w-2/3 overflow-x-auto custom-scrollbar pb-4">
-                <div class="w-full text-center mb-4">
-                    <h2 id="hitos-header" class="text-purple-500 font-bold tracking-[0.3em] uppercase text-sm">Hitos · Módulos del Anexo Técnico y transversales</h2>
+                <div class="w-full text-center mb-3">
+                    <h2 id="hitos-header" class="text-purple-500 font-bold tracking-[0.3em] uppercase text-sm">Hitos</h2>
                 </div>
-                <div id="bars-container" class="bar-container flex gap-12 border-b border-slate-700 pb-2 relative"></div>
-                <div id="matrix-container" class="relative flex gap-12 pt-2"></div>
+                <div id="group-headers" class="flex gap-3 mb-2"></div>
+                <div id="bars-container" class="bar-container flex gap-3 border-b border-slate-700 pb-2 relative"></div>
+                <div id="matrix-container" class="relative flex gap-3 pt-2"></div>
             </div>
         </div>
 
-        <div id="ficha-tecnica" class="mt-8 bg-slate-800/40 p-6 rounded-xl border border-purple-700 transition-all duration-500 opacity-40">
-            <div class="flex justify-between items-start mb-4 border-b border-purple-900/30 pb-4">
-                <div>
-                    <span id="ficha-id" class="text-xs font-bold bg-purple-900/50 text-purple-400 px-2 py-1 rounded tracking-widest mb-2 inline-block uppercase">Hito</span>
-                    <h3 id="ficha-title" class="text-2xl font-bold text-white tracking-wide">Seleccione una barra de progreso</h3>
-                    <p id="ficha-split" class="text-sm text-purple-400 font-mono mt-2"></p>
-                </div>
-                <div class="text-right">
-                    <p id="ficha-date" class="text-sm text-slate-400 font-mono"></p>
-                    <p id="ficha-resp" class="text-sm font-bold text-slate-300 mt-1 uppercase"></p>
-                </div>
-            </div>
-            <div id="ficha-details" class="text-slate-300 leading-relaxed text-lg font-light"></div>
-        </div>
+        <!-- Caja inferior: resumen del mes o ficha del hito -->
+        <div id="ficha-tecnica" class="mt-8 bg-slate-800/40 p-6 rounded-xl border border-purple-700 transition-all duration-500"></div>
     </div>
 
     <script src="registry.js"></script>
