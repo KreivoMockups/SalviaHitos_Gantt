@@ -42,6 +42,15 @@
     .legend-item .upset-matrix-circle { margin: 0; }
     .custom-scrollbar::-webkit-scrollbar { height: 8px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    .hours-svg #g-banda, .hours-svg #g-marca, .hours-svg #g-valor { transition: transform .45s cubic-bezier(.4,0,.2,1); }
+    .hours-svg #g-recorrido { transition: stroke-dashoffset .45s cubic-bezier(.4,0,.2,1); }
+    .hours-svg .g-mes { transition: opacity .3s; }
+    .hours-svg .g-punto, .hours-svg .g-eje { transition: fill .3s; }
+    .bolsa-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 999px; font-family: ui-monospace, monospace; white-space: nowrap; }
+    .bolsa-badge.b1 { background: rgba(186,92,200,0.18); color: #e0a8ea; border: 1px solid rgba(186,92,200,0.45); }
+    .bolsa-badge.b2 { background: rgba(95,179,201,0.15); color: #9fd6e4; border: 1px solid rgba(95,179,201,0.45); }
+    .risk-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 700; color: #fbbf24; cursor: help; vertical-align: middle; }
+    .risk-box { border: 1px solid rgba(245,158,11,0.45); background: rgba(245,158,11,0.07); border-radius: 10px; padding: 12px 14px; }
     table.hours td, table.hours th { padding: 6px 10px; border-bottom: 1px solid rgba(148,163,184,0.12); }
     </style>
 
@@ -57,12 +66,22 @@
 <body class="bg-slate-950 text-slate-200 min-h-screen p-8 font-sans overflow-x-hidden selection:bg-slate-500/30">
     <div class="max-w-7xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-10">
 
-        <header class="mb-6 border-b border-slate-800 pb-6 flex justify-between items-end gap-6">
+        <header class="mb-6 border-b border-slate-800 pb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
                 <h1 class="text-3xl font-bold tracking-tight text-white uppercase">SALVIA - Plan de trabajo y seguimiento relacionado con los Hitos de Proyecto</h1>
                 <p class="text-slate-400 mt-2 tracking-wider text-sm uppercase font-mono">Control de Avance Contractual y EDT: <span id="edt-avance">44%</span> <span id="edt-mes" class="text-slate-500"></span></p>
             </div>
-            <div class="text-right">
+            <div class="flex items-center gap-3 self-end md:self-auto">
+                <!-- Botón hacia pipeline.html -->
+                <a href="pipeline.html" 
+                   class="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 hover:text-white text-xs font-semibold rounded-full border border-purple-500/40 transition-colors shadow-sm"
+                   title="Abrir mapa de pantallas y traspasos de tareas (Red de Acción)">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                    </svg>
+                    <span>Red de Acción (Pipeline)</span>
+                </a>
+
                 <span class="px-3 py-1 bg-slate-800 text-purple-500 text-xs rounded-full border border-purple-500/30 font-bold uppercase whitespace-nowrap" id="fecha-actualizacion">actualizado el 13/octubre/2026</span>
             </div>
         </header>
@@ -95,6 +114,7 @@
             <span class="legend-item"><span class="upset-matrix-circle planned"></span>Pendiente (en el plan)</span>
             <span class="legend-item"><span class="upset-matrix-circle"></span>No aplica al hito</span>
             <span class="legend-item"><span class="upset-matrix-circle planned has-hours"></span>Con horas del hito seleccionado</span>
+            <span class="legend-item"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2z" fill="#f59e0b"/><rect x="11" y="9" width="2" height="6" fill="#0f172a"/><rect x="11" y="16.5" width="2" height="2" fill="#0f172a"/></svg>Riesgos críticos de QA abiertos</span>
         </div>
 
         <div class="flex">

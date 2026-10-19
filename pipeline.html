@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Red de acción SALVIA</title>
+<meta name="description" content="Mapa interactivo de pantallas y traspasos de tareas de la plataforma SALVIA, con capturas por pantalla, para capacitación.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:_ApprovalStatus msdt:dt="string">0</mso:_ApprovalStatus>
+<mso:_ApprovalAssignedTo msdt:dt="string"></mso:_ApprovalAssignedTo>
+<mso:_ApprovalRespondedBy msdt:dt="string"></mso:_ApprovalRespondedBy>
+<mso:_ApprovalSentBy msdt:dt="string"></mso:_ApprovalSentBy>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>
+<body>
+<div class="wrap">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+    <a href="index.html" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 700; font-family: var(--mono);">
+      &larr; Volver al Dashboard de Hitos
+    </a>
+  </div>
+  <header>
+    <div class="eyebrow">SALVIA Etapa 2 · Material de capacitación</div>
+    <p class="lede">Cada caja es una pantalla y cada línea es una tarea que pasa de un rol a otro. La línea continua es un paso en serie: el siguiente rol espera. La punteada abre un frente en paralelo mientras el caso sigue su curso. Toque una caja para ver la pantalla, quién la usa y a quién le entrega trabajo. La alerta inminente, a la derecha, es transversal: se activa desde registro, seguimiento, equipos especializados o territorio.</p>
+  </header>
+
+  <div class="toolbar" role="group" aria-label="Filtrar por módulo">
+    <span class="lbl">Resaltar módulo:</span>
+    <button class="chip" data-mod="" aria-pressed="true" id="f-todos">Todos</button>
+    <button class="chip" data-mod="registro" aria-pressed="false" id="f-registro">Reporte y Registro</button>
+    <button class="chip" data-mod="alerta" aria-pressed="false" id="f-alerta">Alerta inminente</button>
+    <button class="chip" data-mod="seguimiento" aria-pressed="false" id="f-seguimiento">Seguimiento</button>
+    <button class="chip" data-mod="psicosocial" aria-pressed="false" id="f-psicosocial">Psicosocial</button>
+    <button class="chip" data-mod="medidas" aria-pressed="false" id="f-medidas">Medidas de Emergencia</button>
+    <button class="chip" data-mod="barreras" aria-pressed="false" id="f-barreras">Barreras y oficios</button>
+    <button class="chip" data-mod="rutas" aria-pressed="false" id="f-rutas">Rutas y entidades</button>
+  </div>
+
+  <div class="legend">
+    <span><i class="sw"></i>En serie</span>
+    <span><i class="sw par"></i>En paralelo</span>
+    <span><i class="dot st-impl" style="background:var(--ok)"></i>En la plataforma</span>
+    <span><i class="dot" style="background:var(--warn)"></i>Pendiente de producción</span>
+    <span><i class="dot" style="background:var(--build)"></i>Validado, por construir</span>
+    <span><i class="dot" style="background:var(--mock)"></i>Solo en el mockup</span>
+    <span><i class="sw par" style="border-color:var(--risk)"></i>Alerta inminente: se activa desde cualquier atención</span>
+  </div>
+
+  <div class="main">
+    <div class="mapbox"><svg class="map" id="map" viewBox="0 0 1390 804" role="img" aria-label="Red de pantallas y traspasos de tareas de SALVIA"></svg></div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <footer>Capturas: mockup de Vercel y mockup validado de Reporte, Registro y Alerta (datos ficticios). El estado de cada pantalla sale de los manuales técnicos, con corte al 13 de octubre de 2026.</footer>
+</div>
+
+<dialog id="zoom"><form method="dialog"><button id="zoom-close">Cerrar</button></form><img id="zoom-img" alt=""></dialog>
+
+<script src="datos.js"></script>
+<script src="app_r.js"></script>
+</body>
+</html>

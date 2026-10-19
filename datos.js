@@ -1,0 +1,91 @@
+/* Datos de la Red de acción SALVIA: manuales, estados, franjas, pantallas (N) y traspasos (E).
+   Para agregar una pantalla, sume una fila a N; para un traspaso, una fila a E.
+   Un traspaso con quinto valor 1 no se dibuja (por ejemplo, los accesos a la alerta inminente desde cada franja). */
+const MAN = {
+  registro: ['Reporte, Registro y Alerta inminente', 'https://drive.google.com/file/d/1C1_FAxwx_TTnF-w9Et2fDHJfkX2Chpqe/view?usp=drive_link'],
+  alerta: ['Reporte, Registro y Alerta inminente', 'https://drive.google.com/file/d/1C1_FAxwx_TTnF-w9Et2fDHJfkX2Chpqe/view?usp=drive_link'],
+  seguimiento: ['Seguimiento', 'https://drive.google.com/file/d/1L3jTOyk9SStmc73cs--yisYC0OI0R2j2/view?usp=drive_link'],
+  psicosocial: ['Atención Psicosocial', 'https://drive.google.com/file/d/11xM6TJcuXHwVlyqZrmqRGpDoYiK2IyNN/view?usp=drive_link'],
+  medidas: ['Medidas de Emergencia y Estabilización', 'https://drive.google.com/file/d/1eZRrlV9H5e63qGb5u9rrb1BI8WtY5Zuo/view?usp=drive_link'],
+  barreras: ['Barreras, notificaciones y oficios', 'https://drive.google.com/file/d/1Sh3KQrz6cVFmSJ79QPHfsmFJ6QhI3gEy/view?usp=drive_link'],
+  rutas: ['Rutas y gestión institucional', 'https://drive.google.com/file/d/1D3Ueer410IThTqolMMac4RhaTva1kVMM/view?usp=drive_link']
+};
+const ST = { impl: ['En la plataforma', 'st-impl'], pend: ['Pendiente de producción', 'st-pend'], build: ['Validado, por construir', 'st-build'], mock: ['Solo en el mockup', 'st-mock'] };
+const BANDS = [['Puerta de entrada', 12], ['Registro', 172], ['Seguimiento y coordinación', 332], ['Equipos especializados', 492], ['Territorio y actores externos', 652]];
+const W = 140, H = 50;
+// x, banda, id, nombre, rol, código, módulo, estado, imágenes, descripción
+const N = [
+  ['rep', 150, 0, 'Reporte web', 'Ciudadanía', 'público', 'registro', 'pend', ['r_r01_autorizacion', 'r_r02_perfil', 'r_r03_formulario_reporte'], 'La persona autoriza el uso de datos, dice si es víctima, tercero, familiar u hombre, y describe los hechos. Recibe un número de radicado.'],
+  ['mis', 300, 0, 'Mis Reportes', 'Agente Integral', 'ro / op', 'registro', 'build', ['r_r03_login', 'r_r04_mis_reportes', 'r_r05_ver_reporte'], 'La Gestoría asigna cada reporte a la bandeja de un agente. Antes de llamar, el agente descarta los reportes sin información mínima o de prueba.'],
+  ['rec', 450, 0, 'Recontacto 3x3', 'Agente Integral', 'ro / op', 'registro', 'build', ['r_r06_recontacto_3x3', 'r_r07_post_contacto', 'r_r07b_post_contacto_apertura'], 'Tres intentos al día en tres días distintos. Con contacto, el agente decide: cierre por no competencia, por decisión de la persona o apertura de caso.'],
+  ['l155', 750, 0, 'Línea 155', 'Agente Integral', 'op', 'registro', 'build', ['r_r22_llamada_155'], 'La llamada entrante abre el buscador con el teléfono de quien llama, sin pasar por un reporte previo.'],
+  ['bus', 600, 0, 'Buscador', 'Agente Integral', 'op', 'registro', 'build', ['r_r08_buscador_duplicidad', 'r_r21_buscador'], 'Busca por documento, nombre o teléfono para no duplicar personas. Ofrece actualizar un caso activo, abrir un caso nuevo, retomar un borrador o crear el registro.'],
+  ['ing', 150, 1, 'Formulario de ingreso', 'Agente Integral', 'op', 'registro', 'impl', ['r_r09_registro_preformulario', 'r_r10_formulario_contacto', 'r_r11_hechos'], 'Siete módulos: identificación, datos personales, contacto de apoyo, hechos, agresor, tamizaje y gestión. Guarda solo y se puede retomar. El formulario dinámico existe; la versión del mockup está por construir.'],
+  ['tz', 300, 1, 'Tamizaje', 'Agente Integral', 'op', 'registro', 'impl', ['r_r12_tamizaje'], 'Elige el instrumento por orientación sexual o identidad de género y por relación con el agresor. El nivel de riesgo decide el calendario de seguimientos y la alerta.'],
+  ['gs', 450, 1, 'Gestión Salvia', 'Agente Integral', 'op', 'registro', 'build', ['r_r13_gestion_salvia', 'r_r17_registro_terminado'], 'El agente marca acciones (rutas, barreras), medios (oficio, Mi Salvia, denuncia fácil) y remisiones. Al finalizar, cada marca se convierte en una tarea para otro equipo.'],
+  ['ai', 1276, 1, 'Activar alerta', 'Cualquier profesional', 'atención directa', 'alerta', 'build', ['r_r14_alerta_formulario', 'r_r15_alerta_diligenciada', 'r_r16_alerta_enviada'], 'Botón disponible para toda persona que atiende casos: Agente Integral, seguimiento, psicosocial, medidas de emergencia y territorio. Ante riesgo para la vida o para la integridad (respuesta hasta 36 horas), se marca al menos un criterio general, de ruta diferenciada o poblacional. La atención queda pendiente con los campos mínimos y se completa en un contacto posterior.'],
+  ['ges', 1276, 2, 'Bandeja de alertas', 'Gestora (supervisora)', 'sv · por validar', 'alerta', 'build', ['r_r18_bandeja_alertas', 'r_r19_alerta_detalle'], 'La Gestora recibe la alerta en una bandeja especial y designa al agente activador, que debe ser otra persona distinta de quien mantiene contacto con la víctima.'],
+  ['act', 1276, 3, 'Activación de rutas', 'Agente activador', 'an · notificaciones', 'alerta', 'build', ['r_r20_alerta_activacion'], 'El agente activador, del equipo de notificaciones, activa las rutas de emergencia mientras quien atiende sigue en contacto con la víctima, y marca la alerta como atendida.'],
+  ['hist', 1276, 4, 'Casos con alerta', 'Profesional técnica', 'sv', 'alerta', 'build', ['r_r24_expediente_alertas', 'r_r23_expediente'], 'El detalle del caso muestra que hubo alerta y permite volver a activarla. La profesional técnica filtra los casos con alerta para darles monitoreo reforzado, y las descargas permiten contar alertas por mes y analizar patrones.'],
+  ['caso', 150, 2, 'Casos', 'Supervisor', 'sv', 'seguimiento', 'impl', ['g_01_casos', 'g_22_detalle-caso', 'g_23_gestion-institucional', 'g_24_nuevo-seguimiento', 'g_03_registro-caso', 'g_04_registro-salvia'], 'El caso llega a Seguimiento con su calendario, su equipo y su agente asignados según el nivel de riesgo.'],
+  ['area', 300, 2, 'Seguimientos del área', 'Supervisor', 'sv', 'seguimiento', 'impl', ['g_06_seguimientos-area'], 'La supervisión ve los seguimientos de su equipo, reasigna y controla los vencidos.'],
+  ['mseg', 450, 2, 'Mis seguimientos', 'Operador de seguimiento', 'ro', 'seguimiento', 'impl', ['g_07_mis-seguimientos', 'g_25_hacer-seguimiento'], 'El agente hace cada seguimiento del calendario: verifica riesgo, entidades y barreras. Cada seguimiento puede crear barreras, tareas y remisiones.'],
+  ['mtar', 600, 2, 'Mis tareas', 'Operador de seguimiento', 'ro', 'seguimiento', 'impl', ['g_08_mis-tareas'], 'Bandeja de tareas que otros roles o el sistema le crean: proyectar oficios, llamar a entidades, solicitudes a entidades.'],
+  ['lid', 750, 2, 'Casos de mis departamentos', 'Lideresa', 'por crear', 'seguimiento', 'mock', ['g_02_casos-lideresa'], 'Vista de los casos de un territorio. Antes de construirla hay que definir qué datos de la víctima puede ver.'],
+  ['rps', 150, 3, 'Remisiones psicosocial', 'Supervisor', 'sv', 'psicosocial', 'impl', ['g_12_remisiones-psicosocial'], 'Llegan las remisiones desde Seguimiento, Registro o el Equipo Técnico. La supervisión las asigna a una profesional o a una dupla.'],
+  ['mps', 300, 3, 'Mis remisiones', 'Psicóloga · Trabajadora social', 'ps · ts', 'psicosocial', 'impl', ['g_13_mis-remisiones-psicosocial', 'g_27_contactos-psicosocial', 'g_28_sesion-psicosocial', 'g_14_calendario-psicosocial'], 'La profesional valida, contacta por 3x3, agenda sesiones y cierra desde la tercera sesión. En cada sesión puede registrar barreras y derivar a otros equipos.'],
+  ['met', 450, 3, 'Revisión de remisiones ME', 'Equipo Técnico', 'te', 'medidas', 'mock', ['m_01_bandeja-equipo-tecnico', 'm_02_revision-equipo-tecnico', 'm_03_revision-equipo-tecnico-diligenciada', 'g_15_remisiones-medidas'], 'El Equipo Técnico aprueba la remisión para caracterización o la devuelve al remitente o a Seguimiento, con concepto técnico obligatorio.'],
+  ['msup', 600, 3, 'Asignación ME', 'Supervisión ME', 'por crear', 'medidas', 'mock', ['m_04_supervisor-por-asignar', 'm_05_asignar-agente', 'm_14_revisar-caracterizacion'], 'Asigna el caso a un Agente ME y luego revisa su caracterización. En riesgo inminente decide entre asignación inmediata o entrega inmediata.'],
+  ['mag', 750, 3, 'Caracterización ME', 'Agente de Medidas', 'por crear', 'medidas', 'mock', ['m_06_detalle-info-medida', 'm_07_tareas-inicio', 'm_08_intento-contacto-3x3', 'm_09_contacto-logrado', 'm_10_gestionar-caso', 'm_11_consentimiento', 'm_12_entrevista-caracterizacion', 'm_13_entrevista-registrada', 'g_16_mis-remisiones-medidas'], 'Contacto 3x3, consentimiento informado y entrevista: hallazgos, medidas requeridas, plan de acción y rutas.'],
+  ['mcon', 900, 3, 'Supervisión del Convenio', 'Supervisión del Convenio', 'por crear', 'medidas', 'mock', ['m_15_revisar-trazabilidad-convenio', 'm_17_aprobar-cotizaciones-convenio'], 'Revisa la trazabilidad, preaprueba las medidas a cotizar y aprueba las cotizaciones una por una.'],
+  ['cruz', 1050, 3, 'Cruz Roja', 'Operador externo', 'por crear', 'medidas', 'mock', ['m_16_cargar-cotizaciones-cruz-roja', 'm_19_marcar-otorgadas-cruz-roja', 'm_20_ciclo-completado'], 'Carga cotizaciones por medida, entrega y marca las medidas como otorgadas, con valor aprobado frente a valor entregado.'],
+  ['not', 150, 4, 'Notificaciones y oficios', 'Agente de notificaciones', 'an', 'barreras', 'impl', ['g_09_notificaciones-salvia'], 'Proyecta, revisa y radica los oficios a entidades. La aprobación jurídica la da el Abogado.'],
+  ['mbar', 300, 4, 'Mis barreras', 'Enlace territorial', 'en', 'barreras', 'impl', ['g_10_mis-barreras', 'g_26_gestionar-barrera', 'g_11_barreras-departamento'], 'El Enlace recibe las barreras que el comité le activa y articula en territorio con la entidad. Ve las barreras de su departamento.'],
+  ['ment', 450, 4, 'Medidas en territorio', 'Enlace territorial', 'en', 'medidas', 'mock', ['g_17_medidas-enlace-territorial', 'm_18_gestion-territorio-enlace'], 'Gestiona en territorio la medida aprobada antes de la entrega de Cruz Roja.'],
+  ['cent', 600, 4, 'Casos Entidad', 'Entidad', 'et', 'rutas', 'pend', ['g_18_casos-entidad', 'g_20_mis-tareas-entidad'], 'La entidad ve solo los casos enrutados a su sede y responde sus acciones institucionales: radicado, ampliación y estado.'],
+  ['cmec', 750, 4, 'Casos Mecanismo', 'Mecanismo articulador', 'mc', 'rutas', 'pend', ['g_19_casos-mecanismo'], 'El mecanismo ve los casos de su territorio con solo dos pestañas: Info General y Gestión Institucional.'],
+  ['dir', 900, 4, 'Directorio de entidades', 'Administrador', 'ad', 'rutas', 'impl', ['g_21_directorio-entidades'], 'Sedes con su sector, competencias y ubicación. De aquí salen las entidades de cada ruta y los listados de la App MASP.']
+];
+// desde, hacia, en paralelo, qué pasa
+const E = [
+  ['rep', 'mis', 0, 'la Gestoría asigna el reporte'],
+  ['mis', 'rec', 0, 'procede recontacto'],
+  ['rec', 'bus', 0, 'apertura de caso con datos del reporte'],
+  ['l155', 'bus', 0, 'llamada entrante'],
+  ['bus', 'ing', 0, 'nuevo registro o nuevo caso'],
+  ['ing', 'tz', 0, 'la tríada habilita el tamizaje'],
+  ['tz', 'gs', 0, 'nivel de riesgo'],
+  ['ing', 'ai', 1, 'riesgo durante el registro', 1],
+  ['mseg', 'ai', 1, 'riesgo durante el seguimiento', 1],
+  ['mps', 'ai', 1, 'riesgo en la atención psicosocial', 1],
+  ['mag', 'ai', 1, 'riesgo en la atención de medidas', 1],
+  ['mbar', 'ai', 1, 'riesgo en la gestión territorial', 1],
+  ['act', 'hist', 0, 'queda marcada en el caso'],
+  ['hist', 'mseg', 1, 'monitoreo reforzado', 1],
+  ['ai', 'ges', 0, 'alerta en la bandeja especial'],
+  ['ges', 'act', 0, 'designa al activador'],
+  ['act', 'met', 1, 'medida SALVIA (conexión por definir)'],
+  ['gs', 'caso', 0, 'caso enrutado con calendario'],
+  ['caso', 'area', 0, 'asignación a equipo'],
+  ['area', 'mseg', 0, 'seguimientos del agente'],
+  ['mseg', 'mtar', 0, 'tareas generadas'],
+  ['caso', 'lid', 1, 'consulta territorial'],
+  ['gs', 'rps', 1, 'remisión psicosocial'],
+  ['mseg', 'rps', 1, 'remisión desde el seguimiento'],
+  ['rps', 'mps', 0, 'asigna profesional o dupla'],
+  ['gs', 'met', 1, 'remisión a Medidas'],
+  ['mseg', 'met', 1, 'remisión desde el seguimiento'],
+  ['met', 'msup', 0, 'aprobado para caracterización'],
+  ['msup', 'mag', 0, 'asigna Agente ME'],
+  ['mag', 'msup', 0, 'caracterización a revisión'],
+  ['msup', 'mcon', 0, 'aprobado por ME'],
+  ['mcon', 'cruz', 0, 'preaprueba y pide cotizaciones'],
+  ['mcon', 'ment', 1, 'gestión en territorio'],
+  ['mtar', 'not', 0, 'proyectar oficio'],
+  ['mseg', 'mbar', 1, 'barrera escalada por el comité'],
+  ['mps', 'mbar', 1, 'barrera desde la sesión'],
+  ['not', 'cent', 0, 'oficio radicado a la entidad'],
+  ['mtar', 'cent', 1, 'solicitud por Mi Salvia'],
+  ['caso', 'cmec', 1, 'casos del territorio'],
+  ['gs', 'dir', 1, 'identificación de entidades']
+];
