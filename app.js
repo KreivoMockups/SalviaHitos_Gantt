@@ -83,6 +83,7 @@ function renderMeses() {
 function irAMes(i) {
     state.mes = Math.min(meses.length - 1, Math.max(0, i));
     render();
+renderCierre();
 }
 
 // ---------- horas: indicadores y gráfico ----------
@@ -241,6 +242,7 @@ function renderMatriz() {
 function selectMilestone(id) {
     state.hito = state.hito === id ? null : id;
     render();
+renderCierre();
 }
 
 // trabajo realizado que no está (o no completo) en las horas reportadas: se muestra como evidencia
@@ -349,8 +351,105 @@ function renderFicha() {
         <table class="hours w-full text-sm text-slate-300"><thead><tr class="text-[11px] uppercase text-slate-500">
         <th class="text-left">Actividad</th><th class="text-right">Mes</th><th class="text-right">Acumulado</th><th class="text-right">% del hito</th></tr></thead>
         <tbody>${filas}</tbody></table>` : '<p class="text-sm text-slate-500">Este hito no tiene horas registradas hasta este mes.</p>'}
-        ${trabajoSinHoras(x => x.hitos.includes(id) && x.mes <= m.id)}`;
+        ${trabajoSinHoras(x => x.hitos.includes(id) && x.mes <= m.id)}
+        ${tareasHito(id)}`;
     document.getElementById('volver-resumen').onclick = () => selectMilestone(id);
+}
+
+
+// ---------- plan de cierre (prórroga) ----------
+const C = D.closure || null;
+const cierreState = { vista: 'gantt', persona: 'Todas' };
+const ETAPA_COLOR = { 'Pendiente por ideación': '#64748b', 'Ideación interna': '#94a3b8', 'MockUp': '#f59e0b', 'Pruebas': '#5fb3c9', 'Desarrollo': '#ba5cc8' };
+const semanaHoy = () => {
+    if (!C) return 0;
+    const hoy = new Date().toISOString().slice(0, 10);
+    const w = C.weeks.find(x => hoy >= x.start && hoy <= x.end);
+    return w ? w.n : (hoy < (C.weeks[0] || {}).start ? 0 : 99);
+};
+function tareasHito(id) {
+    if (!C) return '';
+    const lineas = C.lines.filter(l => l.hitos.includes(id));
+    const tareas = C.tasks.filter(t => t.hito === id);
+    if (!lineas.length && !tareas.length) return '';
+    const sem = n => (C.weeks.find(w => w.n === n) || {}).label || n;
+    const ls = lineas.map(l => `<li class="flex gap-3 items-start"><span class="etapa flex-shrink-0" style="border-color:${ETAPA_COLOR[l.stage] || '#475569'}">${esc(l.stage)}</span>
+        <span><strong class="text-white">${esc(l.line)}</strong> · ${esc(l.owner)} · semanas ${l.from} a ${l.to} (${esc(sem(l.from))} → ${esc(sem(l.to))})<br><span class="text-slate-400 text-xs">${esc(l.status)}</span></span></li>`).join('');
+    return `<h4 class="text-xs uppercase tracking-wider text-slate-400 mt-6 mb-2">Plan de cierre de este hito</h4>
+        <ul class="space-y-2 text-sm text-slate-300">${ls}</ul>
+        ${tareas.length ? `<p class="text-xs text-slate-400 mt-3">${tareas.length} tareas por desarrollar asociadas (ver sección Plan de cierre).</p>` : ''}`;
+}
+function renderCierre() {
+    const box = document.getElementById('plan-cierre');
+    if (!box) return;
+    if (!C) { box.style.display = 'none'; return; }
+    const hoy = semanaHoy();
+    const personas = ['Todas', ...Array.from(new Set([...C.lines.map(l => l.owner), ...C.tasks.map(t => t.owner), ...C.docs.map(d => d.owner)]))];
+    const filtra = x => cierreState.persona === 'Todas' || x.owner === cierreState.persona;
+    const ultDev = Math.max(...C.lines.map(l => l.to));
+    const finDev = (C.weeks.find(w => w.n === ultDev) || {}).label || '';
+    const cab = C.weeks.map(w => `<th class="wk ${w.use !== 'Desarrollo' ? 'cierre' : ''}">S${w.n}<br><span class="normal-case font-normal">${esc(w.label)}</span></th>`).join('');
+    let cuerpo = '';
+    if (cierreState.vista === 'gantt') {
+        const filas = C.lines.filter(filtra).map(l => {
+            const celdas = C.weeks.map(w => {
+                const en = w.n >= l.from && w.n <= l.to;
+                const cls = ['barra', w.n === l.from ? 'ini' : '', w.n === l.to ? 'fin' : ''].join(' ');
+                return `<td class="cell ${w.use !== 'Desarrollo' ? 'cierre' : ''} ${w.n === hoy ? 'hoy' : ''}">${en ? `<div class="${cls}" style="background:${ETAPA_COLOR[l.stage] || 'var(--accent)'}"></div>` : ''}</td>`;
+            }).join('');
+            return `<tr><td class="w-1/4"><p class="font-bold text-white">${esc(l.line)}</p><p class="text-slate-400">${esc(l.owner)} · ${esc(l.hitos.join(', '))}</p></td>
+                <td class="w-1/4"><span class="etapa" style="border-color:${ETAPA_COLOR[l.stage] || '#475569'}">${esc(l.stage)}</span><p class="text-slate-400 mt-1 leading-snug">${esc(l.status)}</p></td>${celdas}</tr>`;
+        }).join('');
+        const docs = C.docs.filter(filtra);
+        const mods = Array.from(new Set(docs.map(d => d.module)));
+        const filasDoc = mods.map(mo => {
+            const ds = docs.filter(d => d.module === mo), d0 = ds[0];
+            const celdas = C.weeks.map(w => `<td class="cell ${w.use !== 'Desarrollo' ? 'cierre' : ''} ${w.n === hoy ? 'hoy' : ''}">${w.n >= d0.from && w.n <= d0.to ? `<div class="barra ${w.n === d0.from ? 'ini' : ''} ${w.n === d0.to ? 'fin' : ''}" style="background:#22c55e"></div>` : ''}</td>`).join('');
+            return `<tr><td><p class="font-bold text-white">Documentación · ${esc(mo)}</p><p class="text-slate-400">${esc(d0.owner)} · ${ds.length} documentos</p></td>
+                <td><span class="etapa" style="border-color:#22c55e">Documentación</span><p class="text-slate-400 mt-1 leading-snug">Módulo al ${Math.round(d0.progress * 100)} %. ${esc(d0.note)}</p></td>${celdas}</tr>`;
+        }).join('');
+        cuerpo = `<div class="overflow-x-auto custom-scrollbar"><table class="gantt"><thead><tr><th class="text-left text-[10px] uppercase text-slate-400">Línea de trabajo</th><th class="text-left text-[10px] uppercase text-slate-400">Etapa y estado</th>${cab}</tr></thead>
+            <tbody>${filas}${filasDoc ? `<tr><td colspan="${C.weeks.length + 2}" class="text-[10px] uppercase tracking-wider text-slate-500 pt-4">Plan de documentación y soporte</td></tr>${filasDoc}` : ''}</tbody></table></div>`;
+    } else if (cierreState.vista === 'tareas') {
+        const ts = C.tasks.filter(filtra);
+        const fuentes = Array.from(new Set(ts.map(t => t.source)));
+        cuerpo = fuentes.map(f => {
+            const filas = ts.filter(t => t.source === f).map(t => `<tr><td class="whitespace-nowrap">${esc(t.owner)}</td><td>${esc(t.task)}</td><td class="whitespace-nowrap">${esc(t.line)}</td>
+                <td class="text-center">${esc(t.hito)}</td><td class="text-center whitespace-nowrap">S${t.from}–S${t.to}</td><td class="whitespace-nowrap ${t.status === 'Abierto' || t.status === 'Por asignar' ? 'text-amber-400' : 'text-slate-400'}">${esc(t.status)}</td></tr>`).join('');
+            return `<h4 class="text-xs uppercase tracking-wider text-slate-400 mt-4 mb-1">${esc(f)}</h4>
+                <table class="hours w-full text-sm text-slate-300"><thead><tr class="text-[11px] uppercase text-slate-500"><th class="text-left">Responsable</th><th class="text-left">Tarea</th><th class="text-left">Línea</th><th>Hito</th><th>Semanas</th><th class="text-left">Estado</th></tr></thead><tbody>${filas}</tbody></table>`;
+        }).join('') || '<p class="text-sm text-slate-500">Sin tareas para esta persona.</p>';
+    } else {
+        const docs = C.docs.filter(filtra);
+        const mods = Array.from(new Set(docs.map(d => d.module)));
+        cuerpo = `<div class="grid grid-cols-1 md:grid-cols-3 gap-4">${mods.map(mo => {
+            const ds = docs.filter(d => d.module === mo), d0 = ds[0];
+            return `<div class="kpi"><p class="text-[11px] uppercase text-slate-400">${d0.order}. ${esc(mo)} · S${d0.from}–S${d0.to}</p>
+                <div class="meter"><span style="width:${Math.round(d0.progress * 100)}%;background:#22c55e"></span></div>
+                <p class="text-xs text-slate-400 mt-1">Módulo al ${Math.round(d0.progress * 100)} % · ${esc(d0.owner)}</p>
+                <ol class="list-decimal ml-5 mt-3 space-y-1 text-xs text-slate-300">${ds.map(d => `<li>${esc(d.doc)}</li>`).join('')}</ol></div>`;
+        }).join('')}</div>` || '<p class="text-sm text-slate-500">Sin documentos para esta persona.</p>';
+    }
+    const tab = (v, t) => `<button class="tab-btn ${cierreState.vista === v ? 'active' : ''}" data-vista="${v}">${t}</button>`;
+    box.innerHTML = `
+        <div class="flex flex-col md:flex-row justify-between md:items-end gap-4 mb-4 border-b border-slate-700 pb-4">
+            <div>
+                <span class="text-xs font-bold bg-slate-700/60 text-slate-200 px-2 py-1 rounded tracking-widest mb-2 inline-block uppercase">Plan de cierre · prórroga al 31-dic-2026</span>
+                <h3 class="text-2xl font-bold text-white tracking-wide">Lo que falta para completar el desarrollo</h3>
+                <p class="text-sm text-slate-400 mt-1">${C.lines.length} líneas de trabajo · ${C.tasks.length} tareas por desarrollar · ${C.docs.length} documentos. El desarrollo termina en la semana ${ultDev} (${esc(finDev)}); lo que sigue queda para capacitación y entrega.</p>
+            </div>
+            <div class="flex flex-wrap gap-2 items-center">
+                ${tab('gantt', 'Cronograma')}${tab('tareas', 'Tareas por desarrollar')}${tab('docs', 'Documentación')}
+                <select id="cierre-persona" class="bg-slate-800 border border-slate-600 rounded-full text-xs px-3 py-1 text-slate-200">${personas.map(p => `<option ${p === cierreState.persona ? 'selected' : ''}>${esc(p)}</option>`).join('')}</select>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-x-5 gap-y-1 mb-3 text-[11px] text-slate-400">${Object.entries(ETAPA_COLOR).map(([k, v]) => `<span class="inline-flex items-center gap-1"><span style="display:inline-block;width:14px;height:8px;border-radius:4px;background:${v}"></span>${esc(k)}</span>`).join('')}
+            <span class="inline-flex items-center gap-1"><span style="display:inline-block;width:14px;height:8px;border-radius:4px;background:#22c55e"></span>Documentación</span>
+            <span class="inline-flex items-center gap-1"><span style="display:inline-block;width:14px;height:8px;background:rgba(95,179,201,0.25)"></span>Capacitación y entrega</span>
+            ${hoy > 0 && hoy < 99 ? '<span class="inline-flex items-center gap-1"><span style="display:inline-block;width:2px;height:10px;background:#fbbf24"></span>Semana actual</span>' : ''}</div>
+        ${cuerpo}`;
+    box.querySelectorAll('[data-vista]').forEach(b => b.onclick = () => { cierreState.vista = b.dataset.vista; renderCierre(); });
+    document.getElementById('cierre-persona').onchange = e => { cierreState.persona = e.target.value; renderCierre(); };
 }
 
 // ---------- render ----------
@@ -378,3 +477,4 @@ document.addEventListener('keydown', e => {
 });
 
 render();
+renderCierre();
