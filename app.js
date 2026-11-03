@@ -91,12 +91,13 @@ function renderKPIs() {
     const m = meses[state.mes];
     const kpis = [
         m.hours.total || !m.nota
-            ? { t: 'Horas del mes', v: `${fmt(m.hours.total)} h`, s: `Bolsa 1: ${fmt(m.hours.b1)} h · Bolsa 2: ${fmt(m.hours.b2)} h` }
+            ? { t: 'Horas cobrables del mes', v: `${fmt(m.hours.total)} h`, s: `Bolsa 1: ${fmt(m.hours.b1)} h · Bolsa 2: ${fmt(m.hours.b2)} h` }
             : { t: 'Horas del mes', v: 'Sin registro', s: 'Las horas de este mes aún no están en TimeLogs' },
         { t: 'Acumulado del contrato', v: `${fmt(m.cum.total)} h`, s: `${pct(m.cum.total, contrato.total)} % de ${fmt(contrato.total, 0)} h`, p: pct(m.cum.total, contrato.total), c: '#e2e8f0' },
         { t: 'Bolsa 1 · SALVIA', v: `${fmt(m.cum.b1)} h`, s: `${pct(m.cum.b1, contrato.b1)} % de ${fmt(contrato.b1, 0)} h`, p: pct(m.cum.b1, contrato.b1), c: 'var(--accent)' },
         { t: 'Bolsa 2 · MASP', v: `${fmt(m.cum.b2)} h`, s: `${pct(m.cum.b2, contrato.b2)} % de ${fmt(contrato.b2, 0)} h`, p: pct(m.cum.b2, contrato.b2), c: 'var(--accent2)' },
     ];
+    if (m.cum && m.cum.b3 !== undefined) kpis.push({ t: 'Bolsa 3 · Reprocesos', v: `${fmt(m.cum.b3)} h`, s: `${fmt(m.hours.b3 || 0)} h en el mes · no se cobran ni suman al contrato`, p: pct(m.cum.b3, m.cum.total + m.cum.b3), c: '#94a3b8' });
     const cont = document.getElementById('kpis');
     cont.innerHTML = '';
     kpis.forEach(k => {
@@ -112,7 +113,7 @@ function renderKPIs() {
 function renderGrafico() {
     const W = 520, H = 170, top = 14, bottom = 26, left = 8, right = 40;
     const ch = H - top - bottom, n = meses.length, slot = (W - left - right) / n, bw = Math.min(30, slot * 0.6);
-    const maxMes = Math.max(1, ...meses.map(m => m.hours.total));
+    const maxMes = Math.max(1, ...meses.map(m => m.hours.total + (m.hours.b3 || 0)));
     const y = v => top + ch - (v / maxMes) * ch;
     const yc = v => top + ch - (v / contrato.total) * ch;
     let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Horas por mes y acumulado del contrato">`;
@@ -122,13 +123,14 @@ function renderGrafico() {
     meses.forEach((m, i) => {
         const cx = left + slot * i + slot / 2, x = cx - bw / 2;
         const op = i === state.mes ? 1 : 0.45;
-        const h1 = (m.hours.b1 / maxMes) * ch, h2 = (m.hours.b2 / maxMes) * ch;
+        const h1 = (m.hours.b1 / maxMes) * ch, h2 = (m.hours.b2 / maxMes) * ch, h3 = ((m.hours.b3 || 0) / maxMes) * ch;
         svg += `<g style="cursor:pointer" data-mes="${i}" opacity="${op}">
             <rect x="${x - 4}" y="${top}" width="${bw + 8}" height="${ch}" fill="transparent"/>
             <rect x="${x}" y="${top + ch - h1}" width="${bw}" height="${h1}" fill="#ba5cc8" rx="2"/>
             <rect x="${x}" y="${top + ch - h1 - h2}" width="${bw}" height="${h2}" fill="#5fb3c9" rx="2"/>
-            <title>${esc(m.label)}: ${fmt(m.hours.total)} h (B1 ${fmt(m.hours.b1)} · B2 ${fmt(m.hours.b2)}) · acumulado ${fmt(m.cum.total)} h</title></g>`;
-        if (i === state.mes && m.hours.total) svg += `<text x="${cx}" y="${y(m.hours.total) - 4}" fill="#e2e8f0" font-size="10" text-anchor="middle" font-weight="700">${fmt(m.hours.total, 0)}</text>`;
+            ${h3 ? `<rect x="${x + 0.75}" y="${top + ch - h1 - h2 - h3 + 0.75}" width="${bw - 1.5}" height="${Math.max(0, h3 - 1.5)}" fill="rgba(148,163,184,0.18)" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2" rx="2"/>` : ''}
+            <title>${esc(m.label)}: ${fmt(m.hours.total)} h cobrables (B1 ${fmt(m.hours.b1)} · B2 ${fmt(m.hours.b2)})${m.hours.b3 ? ` + ${fmt(m.hours.b3)} h de reprocesos (B3)` : ''} · acumulado cobrable ${fmt(m.cum.total)} h</title></g>`;
+        if (i === state.mes && m.hours.total) svg += `<text x="${cx}" y="${y(m.hours.total + (m.hours.b3 || 0)) - 4}" fill="#e2e8f0" font-size="10" text-anchor="middle" font-weight="700">${fmt(m.hours.total, 0)}</text>`;
         svg += `<text x="${cx}" y="${H - 9}" fill="${i === state.mes ? '#e2e8f0' : '#64748b'}" font-size="9.5" text-anchor="middle">${esc(m.label.split(' ')[0])}</text>`;
         pts.push(`${cx},${yc(m.cum.total)}`);
     });
@@ -268,12 +270,17 @@ function renderResumenMes() {
             return `<tr class="cursor-pointer hover:bg-slate-800/60" data-hito="${id}">
                 <td><span class="text-purple-400 font-bold mr-2">${id}</span>${esc(nombreCorto(id))}</td>
                 <td class="text-right font-mono">${fmt(d.hours)}</td>
-                <td class="text-right font-mono text-slate-400">${pct(d.hours, m.hours.total)} %</td>
+                <td class="text-right font-mono text-slate-400">${pct(d.hours, (m.registered || m.hours).total)} %</td>
                 <td class="text-right font-mono">${fmt(d.cumHours)}</td>
                 <td class="text-right font-mono">${d.completion} %</td></tr>`;
         }).join('');
     }).join('');
     const extra = trabajoSinHoras(x => x.mes === m.id);
+    const rp = m.reprocesos;
+    const reproc = rp ? `<div class="mt-6 border border-slate-600 rounded-lg p-4" style="border-style:dashed">
+        <div class="flex justify-between items-start gap-3"><h4 class="text-sm font-bold text-white">Reprocesos por fallas de desarrollo: no se cobran</h4><span class="bolsa-badge" style="background:rgba(148,163,184,0.15);color:#cbd5e1;border:1px solid #94a3b8">${fmt(rp.horas)} h · B3</span></div>
+        <p class="text-xs text-slate-400 mt-1">${rp.descontado.b1 + rp.descontado.b2 ? `Estaban dentro de las ${fmt(m.registered.total)} h registradas; se restan de Bolsa 1 (${fmt(rp.descontado.b1)} h) y Bolsa 2 (${fmt(rp.descontado.b2)} h). Horas cobrables: ${fmt(m.hours.total)} h.` : `Trabajo sobre issues ya reportados en meses anteriores; no se suma a las ${fmt(m.hours.total)} h cobrables.`}${rp.excluido ? ` Se excluyen ${fmt(rp.excluido)} h que ya se habían contado como reproceso.` : ''}</p>
+        <table class="hours w-full text-sm text-slate-300 mt-2"><tbody>${rp.modulos.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="text-right font-mono">${fmt(v)}</td></tr>`).join('')}</tbody></table></div>` : '';
     const aspectos = (m.highlights || []).map(a => `<li class="flex gap-3"><span class="text-purple-400">●</span><span>${esc(a)}</span></li>`).join('');
     ficha.innerHTML = `
         <div class="flex justify-between items-start mb-4 border-b border-purple-900/30 pb-4 gap-6">
@@ -290,11 +297,12 @@ function renderResumenMes() {
             <div>
                 <h4 class="text-xs uppercase tracking-wider text-slate-400 mb-3">Aspectos más relevantes</h4>
                 <ul class="space-y-3 text-slate-300 leading-relaxed">${aspectos || '<li class="text-slate-500">Sin resumen registrado para este mes.</li>'}</ul>
+                ${reproc}
                 ${extra}
             </div>
             <div>
                 <h4 class="text-xs uppercase tracking-wider text-slate-400 mb-1">Horas por hito</h4>
-                <p class="text-[11px] text-slate-500 mb-1">Seleccione un hito para ver su ficha.</p>
+                <p class="text-[11px] text-slate-500 mb-1">Seleccione un hito para ver su ficha.${m.reprocesos && (m.reprocesos.descontado.b1 + m.reprocesos.descontado.b2) ? ` Incluye las ${fmt(m.reprocesos.descontado.b1 + m.reprocesos.descontado.b2)} h de reprocesos (total registrado: ${fmt(m.registered.total)} h).` : ''}</p>
                 <table class="hours w-full text-sm text-slate-300">
                     <thead><tr class="text-[11px] uppercase text-slate-500"><th class="text-left">Hito</th><th class="text-right">Mes</th><th class="text-right">% mes</th><th class="text-right">Acum.</th><th class="text-right">Avance</th></tr></thead>
                     <tbody>${filas}</tbody>
@@ -341,7 +349,7 @@ function renderFicha() {
             </div>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-            <div class="kpi"><p class="text-[11px] uppercase text-slate-400">Horas en el mes</p><p class="text-xl font-bold text-white">${fmt(d.hours)} h</p><p class="text-xs text-slate-400">${pct(d.hours, m.hours.total)} % del mes</p></div>
+            <div class="kpi"><p class="text-[11px] uppercase text-slate-400">Horas en el mes</p><p class="text-xl font-bold text-white">${fmt(d.hours)} h</p><p class="text-xs text-slate-400">${pct(d.hours, (m.registered || m.hours).total)} % del mes</p></div>
             <div class="kpi"><p class="text-[11px] uppercase text-slate-400">Horas acumuladas</p><p class="text-xl font-bold text-white">${fmt(d.cumHours)} h</p><p class="text-xs text-slate-400">${pct(d.cumHours, m.cum.total)} % del acumulado</p></div>
             <div class="kpi"><p class="text-[11px] uppercase text-slate-400">Avance del hito</p><p class="text-xl font-bold text-white">${d.completion} %</p><div class="meter"><span style="width:${d.completion}%;background:var(--accent)"></span></div></div>
             <div class="kpi"><p class="text-[11px] uppercase text-slate-400">Grupo</p><p class="text-sm font-bold text-white mt-1">${esc(h.group || '—')}</p></div>
