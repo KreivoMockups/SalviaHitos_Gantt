@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Instrucciones de cierre SALVIA</title>
+<meta name="description" content="Plan de cierre de SALVIA Etapa 2 (versión 1.2): historias de aceptación, tareas por integrante y su vínculo con las pantallas de la Red de acción.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f4f8; --surface: #ffffff; --band: #ece8f1; --ink: #1f1a26; --muted: #5f566b; --line: #c9c1d4;
+  --accent: #5b2a86; --accent-soft: #e7dcf2; --ok: #1f7a4d; --ok-soft: #dff1e7; --warn: #9a5b00; --warn-soft: #fbeccc;
+  --build: #1f5f9a; --build-soft: #dce9f6; --mock: #6c6476; --mock-soft: #ebe8ee; --risk: #b3261e; --risk-soft: #fbe4e2;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17141c; --surface: #211d28; --band: #2a2532; --ink: #efeaf5; --muted: #b3a9c0; --line: #4a4256;
+    --accent: #c9a6ec; --accent-soft: #3b2d4c; --ok: #7fd3a6; --ok-soft: #1e3a2c; --warn: #f0c070; --warn-soft: #43341a;
+    --build: #93c1f0; --build-soft: #1d3247; --mock: #b9b0c4; --mock-soft: #302b38; --risk: #ff8a80; --risk-soft: #3d2023; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #17141c; --surface: #211d28; --band: #2a2532; --ink: #efeaf5; --muted: #b3a9c0; --line: #4a4256;
+  --accent: #c9a6ec; --accent-soft: #3b2d4c; --ok: #7fd3a6; --ok-soft: #1e3a2c; --warn: #f0c070; --warn-soft: #43341a;
+  --build: #93c1f0; --build-soft: #1d3247; --mock: #b9b0c4; --mock-soft: #302b38; --risk: #ff8a80; --risk-soft: #3d2023; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+a { color: var(--accent); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 20px 16px 64px; }
+.top { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font: 500 13px var(--mono); }
+.top a { text-decoration: none; font-weight: 500; }
+.top .sep { color: var(--line); }
+header { margin: 18px 0 10px; }
+.eyebrow { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 700 clamp(28px, 4vw, 40px)/1.1 var(--display); margin: 6px 0 10px; }
+h2 { font: 700 24px/1.2 var(--display); margin: 0 0 6px; }
+h3 { font: 700 17px/1.3 var(--display); margin: 0; }
+.lede { max-width: 820px; color: var(--muted); margin: 0; }
+.meta { margin-top: 10px; font: 13px var(--mono); color: var(--muted); }
+nav.secs { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); margin: 14px -16px 0; padding: 8px 16px; display: flex; gap: 6px; overflow-x: auto; }
+nav.secs a { flex: none; font: 500 13px var(--mono); text-decoration: none; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink); background: var(--surface); }
+nav.secs a:hover { border-color: var(--accent); }
+section { margin-top: 36px; }
+.intro { color: var(--muted); max-width: 860px; margin: 0 0 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.grid { display: grid; gap: 12px; }
+.kpis { grid-template-columns: repeat(auto-fit, minmax(138px, 1fr)); margin-top: 18px; }
+.kpi { padding: 14px; }
+.kpi .l { font: 12px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.kpi .v { font: 700 28px/1.2 var(--display); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.kpi .s { font-size: 13px; color: var(--muted); }
+.pill { display: inline-flex; align-items: center; gap: 5px; font: 500 12px/1.4 var(--mono); padding: 2px 9px; border-radius: 999px; white-space: nowrap; border: 1px solid transparent; }
+.c-ok { background: var(--ok-soft); color: var(--ok); } .c-build { background: var(--build-soft); color: var(--build); }
+.c-warn { background: var(--warn-soft); color: var(--warn); } .c-risk { background: var(--risk-soft); color: var(--risk); }
+.c-mock { background: var(--mock-soft); color: var(--mock); } .c-accent { background: var(--accent-soft); color: var(--accent); }
+.pill.late { background: var(--risk); color: var(--surface); }
+.hb { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font: 700 12px var(--mono); background: var(--accent-soft); color: var(--accent); text-decoration: none; }
+/* chips de pantalla */
+.pchip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 3px 9px 3px 7px; white-space: nowrap; }
+.pchip::before { content: ""; width: 4px; align-self: stretch; border-radius: 2px; background: var(--dot, var(--mock)); }
+.pchip:hover { border-color: var(--accent); }
+.pchip.virtual { border-style: dashed; color: var(--muted); }
+.d-ok { --dot: var(--ok); } .d-build { --dot: var(--build); } .d-warn { --dot: var(--warn); } .d-risk { --dot: var(--risk); } .d-mock { --dot: var(--mock); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+/* novedades */
+.news { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.news .card { border-left: 5px solid var(--k); }
+.news h3 { font-size: 15px; margin-bottom: 4px; color: var(--k); }
+.news p { margin: 0; font-size: 14px; }
+/* historias */
+.story { margin-bottom: 14px; }
+.story-head { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; justify-content: space-between; }
+.story-head h3 { font-size: 20px; }
+.story-head .sub { color: var(--muted); font-size: 14px; }
+.path { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 2px; margin: 14px 0 12px; counter-reset: paso; }
+.step { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-left: 5px solid var(--dot, var(--mock)); border-radius: 8px; padding: 6px 10px; min-width: 120px; max-width: 190px; }
+.step:hover { border-color: var(--accent); border-left-color: var(--dot); }
+.step b { font-size: 13px; line-height: 1.3; }
+.step span { font: 11px var(--mono); color: var(--muted); }
+.step.virtual { border-style: dashed; border-left-style: solid; }
+.arrow { color: var(--muted); font-size: 16px; padding: 0 2px; }
+.bar { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--band); }
+.bar i { display: block; height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); margin-top: 6px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; font-size: 14px; }
+.two h4 { margin: 0 0 4px; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.two p { margin: 0; }
+.rel { margin-top: 12px; font-size: 14px; }
+.rel summary { cursor: pointer; font: 500 13px var(--mono); color: var(--accent); }
+.rel ul { margin: 8px 0 0; padding-left: 18px; }
+/* calendario */
+.weeks { display: grid; grid-template-columns: repeat(9, minmax(92px, 1fr)); gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.wk { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 9px; font-size: 12px; }
+.wk b { font: 700 14px var(--display); display: block; }
+.wk span { color: var(--muted); display: block; }
+.wk.now { border: 2px solid var(--accent); background: var(--accent-soft); }
+.wk.past { opacity: .62; }
+/* filtros */
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 16px 0 12px; }
+.toolbar .grp { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.toolbar .lbl { font: 12px var(--mono); color: var(--muted); }
+.chip { font: 500 13px var(--body); padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+select { font: 14px var(--body); padding: 4px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.banner { display: none; align-items: center; gap: 10px; flex-wrap: wrap; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 14px; }
+.banner.on { display: flex; }
+.banner button { margin-left: auto; }
+/* integrantes */
+.people { grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); }
+.person h3 { font-size: 19px; }
+.person .foco { color: var(--muted); font-size: 14px; margin: 2px 0 8px; }
+.person .lineas { font-size: 13.5px; margin: 0 0 10px; }
+.person .count { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.task { border-top: 1px solid var(--line); padding: 10px 0; }
+.task:first-of-type { border-top: 0; }
+.task.flash { animation: flash 2.2s ease-out; }
+@keyframes flash { 0%, 40% { background: var(--accent-soft); } 100% { background: transparent; } }
+.task .tline { display: flex; gap: 8px; align-items: flex-start; }
+.task .ttxt { flex: 1; font-size: 14.5px; }
+.task .tmeta { font: 12px var(--mono); color: var(--muted); margin: 4px 0 6px; display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.task .tmeta a { color: var(--muted); }
+.task .anchor { font: 12px var(--mono); color: var(--muted); text-decoration: none; }
+.task .anchor:hover { color: var(--accent); }
+.hecho { margin-top: 10px; font-size: 13.5px; background: var(--bg); border-radius: 10px; padding: 8px 12px; }
+.empty { color: var(--muted); font-size: 14px; padding: 6px 0; }
+/* tablas */
+.tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th { text-align: left; font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--band); padding: 9px 12px; white-space: nowrap; }
+td { padding: 9px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+tr.grp td { background: var(--bg); font: 700 13px var(--display); color: var(--muted); }
+tr.target td { background: var(--accent-soft); }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mini { display: inline-flex; gap: 3px; flex-wrap: wrap; }
+.mini a { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.hbar { width: 110px; height: 8px; background: var(--band); border-radius: 999px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 8px; }
+.hbar i { display: block; height: 100%; background: var(--accent); }
+.flag { font: 500 11px var(--mono); color: var(--risk); }
+.note { font-size: 13px; color: var(--muted); }
+footer { margin-top: 40px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 720px) {
+  .two { grid-template-columns: 1fr; }
+  .step { min-width: 0; max-width: none; flex: 1 1 140px; }
+  .arrow { display: none; }
+}
+@media print { nav.secs, .toolbar, .top { display: none; } section { break-inside: avoid-page; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="index.html">&larr; Dashboard de hitos</a><span class="sep">|</span>
+    <a href="pipeline.html">Red de acción (pipeline)</a><span class="sep">|</span>
+    <span>Instrucciones de cierre</span>
+  </div>
+  <header>
+    <div class="eyebrow">SALVIA Etapa 2 · Plan de cierre · versión <span id="ver"></span></div>
+    <h1>Instrucciones de cierre: ocho semanas para llegar al 100 %</h1>
+    <p class="lede">Llegamos al 100 % si las tres historias del caso de estudio (Daniela, Alejo y la familia de Marisol) recorren la Red de acción de punta a punta en producción antes del 12 de diciembre. Cada tarea de esta página está atada a las pantallas que mueve: toque una pantalla para verla en la Red de acción, y desde la Red de acción vuelva a las tareas que la terminan.</p>
+    <p class="meta" id="meta"></p>
+  </header>
+  <nav class="secs" aria-label="Secciones">
+    <a href="#resumen">Resumen</a><a href="#historias">Historias</a><a href="#calendario">Calendario y tareas</a>
+    <a href="#red">Red de acción</a><a href="#cliente">Cliente</a><a href="#hitos">Hitos</a><a href="#riesgos">Brechas y riesgos</a>
+  </nav>
+
+  <section id="resumen">
+    <div class="grid kpis" id="kpis"></div>
+    <h2 style="margin-top:28px">Qué pasó en las semanas 1 a 3</h2>
+    <p class="intro">Del 26-oct al 13-nov, según el Jira del proyecto y el tablero de hitos. El calendario, las historias y el reparto no cambian; cambia lo que queda por hacer.</p>
+    <div class="grid news" id="news"></div>
+  </section>
+
+  <section id="historias">
+    <h2>Las tres historias: ¿el ciclo se completa?</h2>
+    <p class="intro">Cada historia es un guion de prueba: si corre completa en producción, el módulo está terminado. Cada paso es una pantalla de la Red de acción, coloreada con su estado al corte; un paso con borde punteado aún no existe en el mapa.</p>
+    <div class="legend" id="leg-pant"></div>
+    <div id="stories" style="margin-top:14px"></div>
+  </section>
+
+  <section id="calendario">
+    <h2>Calendario y tareas por integrante</h2>
+    <p class="intro">Desarrollo de la semana 1 a la 7; la semana 8 y del 21 al 31-dic son de capacitación, documentación y entrega. Nada se da por terminado hasta que el tramo de la historia corre en testing con un usuario del rol real y QA lo deja grabado.</p>
+    <div class="weeks" id="weeks"></div>
+    <div class="toolbar" role="group" aria-label="Filtrar tareas">
+      <div class="grp" id="f-estado"><span class="lbl">Estado:</span></div>
+      <div class="grp" id="f-hist"><span class="lbl">Historia:</span></div>
+      <div class="grp"><label class="lbl" for="f-persona">Integrante:</label><select id="f-persona"><option value="">Todos</option></select></div>
+    </div>
+    <div class="banner" id="banner"><span id="banner-txt"></span><button class="chip" id="banner-x">Quitar filtro</button></div>
+    <div class="grid people" id="people"></div>
+    <p class="note" style="margin-top:14px">Apoyos del equipo: Laura prioriza los hallazgos con Brayan y, con Manuel, devuelve en máximo tres días hábiles la revisión de cada mockup. Alejo mantiene los usuarios de prueba por rol que piden los guiones de QA.</p>
+  </section>
+
+  <section id="red">
+    <h2>Cobertura de la Red de acción</h2>
+    <p class="intro">Las 30 pantallas del mapa, con su estado según los manuales (13-oct) y su estado en el cierre. Una pantalla que no está en producción y no tiene tareas es un tramo donde la historia se corta sin dueño.</p>
+    <div class="tw"><table id="cov"><thead><tr><th>Pantalla</th><th>Manuales (13-oct)</th><th>Cierre (<span class="corte"></span>)</th><th>Tareas</th><th>Historias</th></tr></thead><tbody></tbody></table></div>
+    <h3 style="margin:22px 0 10px">Traspasos que deben quedar funcionando de punta a punta</h3>
+    <div class="tw"><table id="tras"><thead><tr><th>Traspaso</th><th>Qué debe pasar</th><th>Pantallas</th><th>Historias</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section id="cliente">
+    <h2>Participación del cliente</h2>
+    <p class="intro">Cada decisión tiene fecha. Si no llega en cinco días hábiles, el equipo construye la opción más simple y la deja en acta. Cada aceptación se hace recorriendo la historia completa en vivo con usuarios de cada rol; el acta firmada permite subir el hito al 100 %.</p>
+    <div class="tw"><table id="cli"><thead><tr><th>Semana</th><th>Qué necesitamos de SALVIA</th><th>Estado</th><th>Desbloquea a</th><th>Pantallas</th><th>Historia</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section id="hitos">
+    <h2>Dónde estamos según el tablero</h2>
+    <p class="intro" id="hitos-intro"></p>
+    <div class="tw"><table id="hit"><thead><tr><th>Hito</th><th>Avance</th><th>Qué lo frena</th><th>Responsable</th></tr></thead><tbody></tbody></table></div>
+    <div class="card" style="margin-top:14px">
+      <h3>Marco contractual de la prórroga</h3>
+      <p style="margin:8px 0 0;font-size:14px">El Otrosí 1, firmado el 26 de octubre de 2026, solo amplía el plazo hasta el 31 de diciembre de 2026: no cambia el objeto, el valor ni las obligaciones, y no adiciona recursos. Lo que no quepa en las ocho semanas se documenta como evolución futura. El otrosí no certifica entregas anteriores, por eso las actas de aceptación de este plan son obligatorias.</p>
+    </div>
+  </section>
+
+  <section id="riesgos">
+    <h2>Brechas del caso y riesgos del cierre</h2>
+    <p class="intro">Brechas que el caso de estudio dejó abiertas el 28 de agosto y su situación al corte.</p>
+    <div class="tw"><table id="bre"><thead><tr><th>Brecha</th><th>Situación</th><th>Qué falta</th><th>Pantallas</th></tr></thead><tbody></tbody></table></div>
+    <p class="intro" style="margin-top:22px">El mayor riesgo no es técnico: es que el desarrollo siga creciendo con hallazgos nuevos mientras las horas y las semanas se agotan.</p>
+    <div class="tw"><table id="rie"><thead><tr><th>Riesgo</th><th>Señal</th><th>Regla</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script src="datos.js"></script>
+<script src="cierre.js"></script>
+<script src="registry.js"></script>
+<script>
+(() => {
+  const C = CIERRE;
+  const byId = Object.fromEntries(N.map(n => [n[0], n]));
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const $ = s => document.querySelector(s);
+  const per = Object.fromEntries(C.personas.map(p => [p.id, p]));
+  const corto = id => per[id].nombre.split(' ').slice(0, id === 'af' || id === 'ap' ? 2 : 1).join(' ');
+  const TASKS = C.tareas.map(([id, quien, txt, s1, s2, estado, pantallas, historias, jira, nota, tags]) => ({ id, quien, txt, s1, s2, estado, pantallas, historias, jira, nota, tags }));
+
+  // Semana actual según la fecha de hoy
+  const hoy = new Date(); const iso = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+  let semHoy = 0;
+  C.semanas.forEach(([, ini], i) => { if (iso >= ini) semHoy = i + 1; });
+  const terminado = t => t.estado === 'hecho';
+  const atrasada = t => !terminado(t) && t.estado !== 'curso' && semHoy > t.s2 && t.s2 < 9;
+  const semTxt = t => t.s1 === t.s2 ? `S${t.s1}` : `S${t.s1} a S${t.s2}`;
+
+  const pillT = t => { const [l, c] = C.estadosTarea[t.estado]; return `<span class="pill c-${c}">${l}</span>`; };
+  const estP = id => C.pantallas[id] || ['mock', ''];
+  const colP = id => C.estadosPantalla[estP(id)[0]][1];
+  const chip = id => {
+    const n = byId[id]; if (!n) return '';
+    const [st, nota] = estP(id);
+    return `<a class="pchip d-${colP(id)}" href="pipeline.html#${id}" title="${esc(n[3])} · ${esc(C.estadosPantalla[st][0])}. ${esc(nota)}">${esc(n[3])}</a>`;
+  };
+  const hb = h => `<a class="hb" href="#h-${h}" title="Historia ${h}">${h}</a>`;
+
+  $('#ver').textContent = C.version;
+  document.querySelectorAll('.corte').forEach(e => e.textContent = C.corte);
+  const sem = C.semanas[semHoy - 1];
+  const fmt = d => { const [y, m, dd] = d.split('-'); return `${+dd}-${['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'][m - 1]}`; };
+  $('#meta').innerHTML = `Corte del contenido: ${esc(C.corte)} · ${esc(C.fuentes)}.<br>Hoy: ${sem ? `semana ${semHoy} de 8 (${fmt(sem[1])} al ${fmt(sem[2])}) · ${esc(sem[3])}` : 'antes del plan de cierre'}.`;
+
+  // KPIs
+  const cuenta = e => TASKS.filter(t => t.estado === e).length;
+  const vencidas = C.cliente.filter(c => (c[4] === 'abierta' || c[4] === 'parcial') && c[5] < iso).length;
+  const sinDueno = N.filter(n => !['prod'].includes(estP(n[0])[0]) && !TASKS.some(t => t.pantallas.includes(n[0]))).length;
+  const kp = [
+    ['Semana actual', sem ? `${semHoy} de 8` : '—', sem ? `${fmt(sem[1])} al ${fmt(sem[2])}` : ''],
+    ['Tareas terminadas', `${cuenta('hecho')} de ${TASKS.length}`, 'en testing; falta producción'],
+    ['En revisión o en curso', cuenta('revision') + cuenta('curso'), 'en Jira'],
+    ['Sin tarea en Jira', cuenta('sintarea'), 'camino crítico S4 a S6'],
+    ['Atrasadas', TASKS.filter(atrasada).length, 'su semana final ya pasó'],
+    ['Decisiones vencidas', vencidas, 'del cliente, sin respuesta'],
+    ['Horas cobrables', `${String(C.horas.restantes).replace('.', ',')} h`, `al ${C.horas.corte}; ${String(C.horas.b1).replace('.', ',')} h en Bolsa 1`]
+  ];
+  $('#kpis').innerHTML = kp.map(([l, v, s]) => `<div class="card kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
+  const kc = { ok: 'var(--ok)', build: 'var(--build)', warn: 'var(--warn)', risk: 'var(--risk)', mock: 'var(--mock)' };
+  $('#news').innerHTML = C.novedades.map(([t, k, p]) => `<div class="card" style="--k:${kc[k]}"><h3>${esc(t)}</h3><p>${esc(p)}</p></div>`).join('');
+
+  // Leyenda de estados de pantalla
+  $('#leg-pant').innerHTML = [['ok', 'En producción'], ['build', 'En testing o revisión'], ['warn', 'En construcción o pendiente de producción'], ['risk', 'Sin tarea en Jira'], ['mock', 'Solo en el mockup']].map(([c, l]) => `<span><i style="background:${kc[c]}"></i>${l}</span>`).join('') + '<span><i style="border:1px dashed var(--muted)"></i>Fuera del mapa</span>';
+
+  // Historias
+  const grupo = id => { if (!id) return 'fuera'; const s = estP(id)[0]; return s === 'prod' ? 'prod' : ['testing', 'revision'].includes(s) ? 'test' : 'falta'; };
+  $('#stories').innerHTML = C.historias.map(h => {
+    const g = { prod: 0, test: 0, falta: 0, fuera: 0 }; h.pasos.forEach(([id]) => g[grupo(id)]++);
+    const tot = h.pasos.length;
+    const pasos = h.pasos.map(([id, txt], i) => {
+      const n = id && byId[id];
+      const inner = `<b>${i + 1}. ${esc(txt)}</b><span>${n ? esc(n[3]) + ' · ' + esc(C.estadosPantalla[estP(id)[0]][0]) : 'Por diseñar · fuera del mapa'}</span>`;
+      return (i ? '<span class="arrow" aria-hidden="true">→</span>' : '') + (n ? `<a class="step d-${colP(id)}" href="pipeline.html#${id}" title="${esc(estP(id)[1])}">${inner}</a>` : `<div class="step virtual">${inner}</div>`);
+    }).join('');
+    const rel = TASKS.filter(t => t.historias.includes(h.id) && !terminado(t));
+    const acep = C.semanas.find(s => s[0] === h.aceptacion);
+    return `<article class="card story" id="h-${h.id}">
+      <div class="story-head"><div><h3>${h.id} · ${esc(h.titulo)}</h3><div class="sub">${esc(h.sub)} · sesión de aceptación en ${h.aceptacion} (${fmt(acep[1])} al ${fmt(acep[2])})</div></div>
+      <div class="note">${g.prod} de ${tot} pasos en producción · ${g.test} en testing o revisión · ${g.falta + g.fuera} por construir</div></div>
+      <div class="path">${pasos}</div>
+      <div class="bar" role="img" aria-label="${g.prod} pasos en producción, ${g.test} en testing, ${g.falta + g.fuera} por construir">
+        <i style="width:${g.prod / tot * 100}%;background:var(--ok)"></i><i style="width:${g.test / tot * 100}%;background:var(--build)"></i><i style="width:${g.falta / tot * 100}%;background:var(--warn)"></i><i style="width:${g.fuera / tot * 100}%;background:var(--line)"></i></div>
+      <div class="two"><div><h4>Estado hoy</h4><p>${esc(h.hoy)}</p></div><div><h4>Lo que falta para que corra completa</h4><p>${esc(h.falta)}</p></div></div>
+      <details class="rel"><summary>${rel.length} tareas pendientes de esta historia</summary><ul>${rel.map(t => `<li><a href="#t-${t.id}">${esc(t.txt)}</a> · ${t.quien.map(corto).join(' y ')} · ${pillT(t)}</li>`).join('')}</ul></details>
+    </article>`;
+  }).join('');
+
+  // Calendario
+  $('#weeks').innerHTML = C.semanas.map(([s, ini, fin, txt], i) => `<div class="wk ${i + 1 === semHoy ? 'now' : i + 1 < semHoy ? 'past' : ''}"><b>${s}${i + 1 === semHoy ? ' · hoy' : ''}</b><span>${fmt(ini)} al ${fmt(fin)}</span><span>${esc(txt)}</span></div>`).join('');
+
+  // Filtros
+  const F = { estado: '', hist: '', persona: '', pant: '' };
+  const ESTF = [['', 'Todas'], ['pend', 'Pendientes'], ['hecho', 'Terminadas'], ['sintarea', 'Sin tarea en Jira'], ['late', 'Atrasadas'], ['esperan', 'Esperan a SALVIA o por confirmar']];
+  $('#f-estado').insertAdjacentHTML('beforeend', ESTF.map(([v, l]) => `<button class="chip" data-v="${v}" aria-pressed="${v === '' ? 'true' : 'false'}">${l}</button>`).join(''));
+  $('#f-hist').insertAdjacentHTML('beforeend', [['', 'Todas'], ['A', 'A'], ['B', 'B'], ['C', 'C']].map(([v, l]) => `<button class="chip" data-v="${v}" aria-pressed="${v === '' ? 'true' : 'false'}">${l}</button>`).join(''));
+  $('#f-persona').insertAdjacentHTML('beforeend', C.personas.map(p => `<option value="${p.id}">${esc(p.nombre)}</option>`).join(''));
+  const pasa = t => {
+    if (F.pant && !t.pantallas.includes(F.pant)) return false;
+    if (F.hist && !t.historias.includes(F.hist)) return false;
+    if (F.estado === 'pend' && terminado(t)) return false;
+    if (F.estado === 'hecho' && !terminado(t)) return false;
+    if (F.estado === 'sintarea' && t.estado !== 'sintarea') return false;
+    if (F.estado === 'late' && !atrasada(t)) return false;
+    if (F.estado === 'esperan' && !['cliente', 'confirmar'].includes(t.estado)) return false;
+    return true;
+  };
+  function renderPeople() {
+    const lista = C.personas.filter(p => !F.persona || p.id === F.persona);
+    $('#people').innerHTML = lista.map(p => {
+      const mias = TASKS.filter(t => t.quien.includes(p.id)).sort((a, b) => a.s1 - b.s1 || a.s2 - b.s2);
+      const vis = mias.filter(pasa);
+      const n = e => mias.filter(t => t.estado === e).length;
+      const cnt = [['hecho', n('hecho')], ['revision', n('revision') + n('curso')], ['porhacer', n('porhacer')], ['sintarea', n('sintarea')]].filter(([, v]) => v)
+        .map(([e, v]) => `<span class="pill c-${C.estadosTarea[e][1]}">${v} ${C.estadosTarea[e][0].toLowerCase()}</span>`).join('');
+      const rows = vis.map(t => {
+        const con = t.quien.filter(q => q !== p.id);
+        return `<div class="task" id="${t.quien[0] === p.id ? 't-' + t.id : 't-' + t.id + '-' + p.id}">
+          <div class="tline"><div class="ttxt">${esc(t.txt)}</div><a class="anchor" href="#t-${t.id}" title="Enlace a esta tarea">#</a></div>
+          <div class="tmeta">${pillT(t)}${atrasada(t) ? '<span class="pill late">Atrasada</span>' : ''}<span>${semTxt(t)}</span>${t.jira ? `<span>${esc(t.jira)}</span>` : ''}${con.length ? `<span>con ${con.map(corto).join(' y ')}</span>` : ''}${t.historias.map(hb).join('')}</div>
+          ${t.nota ? `<div class="note">${esc(t.nota)}</div>` : ''}
+          ${t.pantallas.length ? `<div class="chips" style="margin-top:6px">${t.pantallas.map(chip).join('')}</div>` : ''}
+        </div>`;
+      }).join('');
+      if (!vis.length && (F.estado || F.hist || F.pant)) return '';
+      return `<article class="card person" id="per-${p.id}"><h3>${esc(p.nombre)}</h3><div class="foco">${esc(p.foco)}</div>
+        <p class="lineas"><b>Líneas:</b> ${esc(p.lineas)}</p><div class="count">${cnt}</div>
+        ${rows || '<div class="empty">Ninguna tarea con este filtro.</div>'}
+        ${p.nota ? `<p class="note">${esc(p.nota)}</p>` : ''}
+        <div class="hecho"><b>Hecho cuando:</b> ${esc(p.hecho)}</div></article>`;
+    }).join('') || '<div class="empty">Ninguna tarea con estos filtros.</div>';
+    const b = $('#banner');
+    if (F.pant && byId[F.pant]) {
+      const n = byId[F.pant]; const [st, nota] = estP(F.pant);
+      $('#banner-txt').innerHTML = `Tareas que mueven la pantalla <b>${esc(n[3])}</b> (${esc(n[4])}) · <span class="pill c-${colP(F.pant)}">${C.estadosPantalla[st][0]}</span> ${esc(nota)} <a href="pipeline.html#${F.pant}">Ver en la Red de acción</a>`;
+      b.classList.add('on');
+    } else b.classList.remove('on');
+    document.querySelectorAll('#cov tr[data-p]').forEach(tr => tr.classList.toggle('target', tr.dataset.p === F.pant));
+  }
+  const bindChips = (sel, key) => document.querySelectorAll(`${sel} .chip`).forEach(c => c.addEventListener('click', () => {
+    F[key] = c.dataset.v; document.querySelectorAll(`${sel} .chip`).forEach(x => x.setAttribute('aria-pressed', x === c ? 'true' : 'false')); renderPeople();
+  }));
+  bindChips('#f-estado', 'estado'); bindChips('#f-hist', 'hist');
+  $('#f-persona').addEventListener('change', e => { F.persona = e.target.value; renderPeople(); });
+  $('#banner-x').addEventListener('click', () => { F.pant = ''; history.replaceState(null, '', '#calendario'); renderPeople(); });
+
+  // Cobertura de la Red de acción
+  const dotsT = id => TASKS.filter(t => t.pantallas.includes(id)).map(t => `<a href="#t-${t.id}" style="background:${kc[C.estadosTarea[t.estado][1]] || 'var(--accent)'}" title="${esc(t.txt)} · ${esc(C.estadosTarea[t.estado][0])}"></a>`).join('');
+  const histDe = id => ['A', 'B', 'C'].filter(h => C.historias.find(x => x.id === h).pasos.some(p => p[0] === id));
+  let filas = '';
+  const franjas = BANDS.map(b => b[0]).concat(['Alerta inminente (transversal)']);
+  franjas.forEach((fr, bi) => {
+    const ns = N.filter(n => bi === 5 ? n[6] === 'alerta' : n[2] === bi && n[6] !== 'alerta').sort((a, b) => a[1] - b[1]);
+    if (!ns.length) return;
+    filas += `<tr class="grp"><td colspan="5">${esc(fr)}</td></tr>`;
+    ns.forEach(n => {
+      const id = n[0]; const [st, nota] = estP(id); const nt = TASKS.filter(t => t.pantallas.includes(id));
+      const pend = nt.filter(t => !terminado(t)).length;
+      const sinD = st !== 'prod' && !nt.length;
+      filas += `<tr data-p="${id}"><td><a href="pipeline.html#${id}"><b>${esc(n[3])}</b></a><br><span class="note">${esc(n[4])}</span></td>
+        <td><span class="pill c-${({ impl: 'ok', pend: 'warn', build: 'build', mock: 'mock' })[n[7]]}">${ST[n[7]][0]}</span></td>
+        <td><span class="pill c-${colP(id)}">${C.estadosPantalla[st][0]}</span><div class="note" style="margin-top:4px;max-width:340px">${esc(nota)}</div></td>
+        <td>${nt.length ? `<div class="mini">${dotsT(id)}</div><div class="note"><a href="#p-${id}">${nt.length} tareas · ${pend} pendientes</a></div>` : ''}${sinD ? '<div class="flag">Sin dueño en el plan</div>' : ''}</td>
+        <td>${histDe(id).map(hb).join(' ')}</td></tr>`;
+    });
+  });
+  $('#cov tbody').innerHTML = filas;
+  $('#tras tbody').innerHTML = C.traspasos.map(([t, q, ps, hs]) => `<tr><td><b>${esc(t)}</b></td><td>${esc(q)}</td><td><div class="chips">${ps.map(chip).join('')}</div></td><td>${hs.map(hb).join(' ')}</td></tr>`).join('');
+
+  // Cliente
+  const ESTC = { resuelta: ['Resuelta', 'ok'], parcial: ['Parcial', 'build'], abierta: ['Sin respuesta', 'warn'], programada: ['Programada', 'mock'] };
+  $('#cli tbody').innerHTML = C.cliente.map(([s, q, d, hs, e, vence, ps, nota]) => {
+    const venc = (e === 'abierta' || e === 'parcial') && vence < iso;
+    const [l, c] = venc ? ['Vencida', 'risk'] : ESTC[e];
+    return `<tr><td class="num">${esc(s)}</td><td>${esc(q)}${nota ? `<div class="note">${esc(nota)}</div>` : ''}</td><td><span class="pill c-${c}">${l}</span>${venc ? `<div class="note">venció el ${fmt(vence)}</div>` : ''}</td><td>${esc(d)}</td><td><div class="chips">${ps.map(chip).join('')}</div></td><td>${hs.map(hb).join(' ') || '—'}</td></tr>`;
+  }).join('');
+
+  // Hitos (en vivo desde registry.js)
+  const orden = ['M1', 'M2', 'M4', 'M5', 'M3', 'APP', 'H06', 'H07', 'H08', 'H09', 'H10', 'H11'];
+  const ms = (typeof DASHBOARD_DATA !== 'undefined' ? DASHBOARD_DATA.milestones : []).filter(m => orden.includes(m.id)).sort((a, b) => orden.indexOf(a.id) - orden.indexOf(b.id));
+  const meta = typeof DASHBOARD_DATA !== 'undefined' ? DASHBOARD_DATA.meta : {};
+  $('#hitos-intro').textContent = `Avance tomado en vivo del tablero de hitos (EDT ${meta.edt ?? '—'} %, actualizado el ${String(meta.updated || '').replace(/\//g, '-')}). Los módulos de Seguimiento, Tamizaje y LGBTIQ+ van adelante; los hitos que convierten el desarrollo en producto entregado (QA, despliegue, transferencia y entrega) son los que definen el cierre.`;
+  $('#hit tbody').innerHTML = ms.map(m => `<tr><td><b>${esc(m.id)}</b> ${esc(m.name)}</td><td class="num"><span class="hbar"><i style="width:${m.completion}%"></i></span>${m.completion} %</td><td>${esc(C.hitos[m.id] || '')}</td><td>${esc(m.responsable || '')}</td></tr>`).join('');
+
+  // Brechas y riesgos
+  $('#bre tbody').innerHTML = C.brechas.map(([b, s, f, ps]) => `<tr><td><b>${esc(b)}</b></td><td>${esc(s)}</td><td>${esc(f)}</td><td><div class="chips">${ps.map(chip).join('')}</div></td></tr>`).join('');
+  $('#rie tbody').innerHTML = C.riesgos.map(([r, s, g]) => `<tr><td><b>${esc(r)}</b></td><td>${esc(s)}</td><td>${esc(g)}</td></tr>`).join('');
+  $('#foot').innerHTML = `Instrucciones de cierre del proyecto SALVIA, versión ${esc(C.version)} (${esc(C.corte)}). Elaboró Andrés Posada, Gerente de Proyecto, KREIVO S.A.S. Contrato F.S.B. 426-2025 y Otrosí 1. Los estados de las tareas y de las pantallas en el cierre se actualizan en cierre.js; los avances por hito salen del tablero.`;
+
+  // Enlaces profundos: #t-id, #h-A, #p-id, #per-id
+  function irA() {
+    const h = decodeURIComponent(location.hash.slice(1));
+    if (h.startsWith('p-') && byId[h.slice(2)]) {
+      F.pant = h.slice(2); F.estado = ''; F.hist = ''; F.persona = '';
+      document.querySelectorAll('#f-estado .chip, #f-hist .chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === '' ? 'true' : 'false'));
+      $('#f-persona').value = ''; renderPeople();
+      $('#calendario').scrollIntoView(); return;
+    }
+    if (h.startsWith('t-')) {
+      if (!document.getElementById(h)) { F.estado = ''; F.hist = ''; F.persona = ''; F.pant = ''; $('#f-persona').value = ''; document.querySelectorAll('#f-estado .chip, #f-hist .chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.v === '' ? 'true' : 'false')); renderPeople(); }
+      const el = document.getElementById(h);
+      if (el) { el.scrollIntoView({ block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+    }
+  }
+  renderPeople();
+  window.addEventListener('hashchange', irA);
+  if (location.hash) setTimeout(irA, 50);
+})();
+</script>
+</body>
+</html>

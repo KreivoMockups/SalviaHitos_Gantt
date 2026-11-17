@@ -50,12 +50,14 @@ const edgeEls = E.map(([a, b, par, , hidden]) => {
   gEdges.appendChild(e); return e;
 });
 const nodeEls = {};
+const stripEls = {};
 N.forEach(n => {
   const [id, x, b, name, rol, code, mod, st] = n;
   const y = BANDS[b][1] + 58;
   const g = mk('g', { class: 'node' + (st === 'mock' ? ' mock' : ''), tabindex: 0, role: 'button', 'aria-label': `${name}, ${rol}` });
   g.appendChild(mk('rect', { class: 'box', x: x - W / 2, y: y - H / 2, width: W, height: H, rx: 8 }));
-  g.appendChild(mk('rect', { x: x - W / 2 + 6, y: y - H / 2 + 7, width: 4, height: H - 14, rx: 2, fill: STC[st] }));
+  const strip = mk('rect', { x: x - W / 2 + 6, y: y - H / 2 + 7, width: 4, height: H - 14, rx: 2, fill: STC[st], class: 'strip' });
+  g.appendChild(strip); stripEls[id] = strip;
   const fit = (s, max) => s.length > max ? s.slice(0, max - 1) + '…' : s;
   const t1 = mk('text', { x: x - W / 2 + 16, y: y - 3, class: 'n' }); t1.textContent = fit(name, 17); g.appendChild(t1);
   const t2 = mk('text', { x: x - W / 2 + 16, y: y + 13, class: 'r' }); t2.textContent = fit(rol, 20); g.appendChild(t2);
@@ -86,6 +88,7 @@ function render() {
     <div class="tags"><span class="tag">${esc(rol)}</span><span class="tag code">${esc(code)}</span><span class="tag ${ST[st][1]}">${ST[st][0]}</span></div>
     <p class="desc">${esc(desc)}</p>
     <div class="flows"><div><h3>Recibe trabajo de</h3><ul>${li(inn, 'in')}</ul></div><div><h3>Entrega trabajo a</h3><ul>${li(out, 'out')}</ul></div></div>
+    ${cierreHTML(id)}
     <p class="manual note">Manual técnico (acceso restringido al equipo del proyecto): <a href="${man[1]}" target="_blank" rel="noopener">${esc(man[0])}</a></p>`;
   const im = panel.querySelector('#shot');
   im.addEventListener('load', () => { im.removeAttribute('height'); });
@@ -94,6 +97,55 @@ function render() {
   panel.querySelector('#next').onclick = () => { imgIdx++; render(); };
   panel.querySelectorAll('[data-go]').forEach(b => b.onclick = () => select(b.dataset.go));
   paint();
+}
+function cierreHTML(id) {
+  if (typeof CIERRE === 'undefined') return '';
+  const C = CIERRE;
+  const [st, nota] = C.pantallas[id] || ['mock', ''];
+  const [stl, stc] = C.estadosPantalla[st];
+  const tareas = C.tareas.filter(t => t[6].includes(id));
+  const nombre = q => (C.personas.find(p => p.id === q) || { nombre: q }).nombre.split(' ')[0];
+  const hist = C.historias.filter(h => h.pasos.some(p => p[0] === id));
+  const orden = { sintarea: 0, porhacer: 1, cliente: 2, confirmar: 3, revision: 4, curso: 5, plan: 6, hecho: 7 };
+  const lis = tareas.sort((a, b) => orden[a[5]] - orden[b[5]]).map(t => {
+    const [el, ec] = C.estadosTarea[t[5]];
+    return `<li><a class="ctask" href="instrucciones.html#t-${t[0]}"><span class="cst c-${ec}">${esc(el)}</span><span>${esc(t[2])} <span class="via">· ${t[1].map(nombre).join(' y ')} · S${t[3]}${t[4] !== t[3] ? ' a S' + t[4] : ''}</span></span></a></li>`;
+  }).join('');
+  return `<div class="cierre"><h3>En el plan de cierre (v${esc(C.version)}, ${esc(C.corte)})</h3>
+    <p class="cnota"><span class="cst c-${stc}">${esc(stl)}</span> ${esc(nota)}</p>
+    ${hist.length ? `<p class="chist">Historias que pasan por aquí: ${hist.map(h => `<a href="instrucciones.html#h-${h.id}">${h.id} · ${esc(h.titulo)}</a>`).join(' · ')}</p>` : ''}
+    ${tareas.length ? `<ul class="clist">${lis}</ul><p class="note"><a href="instrucciones.html#p-${id}">Ver estas ${tareas.length} tareas en las instrucciones de cierre</a></p>` : '<p class="note">Ninguna tarea del plan de cierre mueve esta pantalla.' + (st !== 'prod' ? ' Es un tramo sin dueño.' : '') + '</p>'}
+  </div>`;
+}
+let capa = 'manual';
+const CST = { prod: 'var(--ok)', testing: 'var(--build)', revision: 'var(--build)', parcial: 'var(--warn)', pendprod: 'var(--warn)', sintarea: 'var(--risk)', mock: 'var(--mock)' };
+function pintarCapa() {
+  N.forEach(n => {
+    const st = capa === 'cierre' && typeof CIERRE !== 'undefined' ? CST[(CIERRE.pantallas[n[0]] || ['mock'])[0]] : STC[n[7]];
+    stripEls[n[0]].setAttribute('fill', st);
+    const esMock = capa === 'cierre' && typeof CIERRE !== 'undefined' ? (CIERRE.pantallas[n[0]] || ['mock'])[0] === 'mock' : n[7] === 'mock';
+    nodeEls[n[0]].classList.toggle('mock', esMock);
+  });
+  const lm = document.getElementById('leg-manual'), lc = document.getElementById('leg-cierre');
+  if (lm && lc) { lm.hidden = capa === 'cierre'; lc.hidden = capa !== 'cierre'; }
+}
+if (typeof CIERRE !== 'undefined') {
+  const leg = document.querySelector('.legend');
+  const caja = document.createElement('div');
+  caja.className = 'capa';
+  caja.innerHTML = `<span class="lbl">Color de las pantallas:</span>
+    <button class="chip" data-capa="manual" aria-pressed="true">Manuales (13-oct)</button>
+    <button class="chip" data-capa="cierre" aria-pressed="false">Plan de cierre (${CIERRE.corte})</button>
+    <span class="leg-c" id="leg-cierre" hidden>${[['prod', 'En producción'], ['testing', 'En testing o revisión'], ['parcial', 'En construcción o pendiente de producción'], ['sintarea', 'Sin tarea en Jira'], ['mock', 'Solo en el mockup']].map(([k, l]) => `<span><i class="dot" style="background:${CST[k]}"></i>${l}</span>`).join('')}</span>`;
+  leg.after(caja);
+  leg.id = 'leg-manual';
+  caja.querySelectorAll('[data-capa]').forEach(b => b.addEventListener('click', () => {
+    capa = b.dataset.capa;
+    caja.querySelectorAll('[data-capa]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    pintarCapa();
+    try { localStorage.setItem('red-capa', capa); } catch (e) {}
+  }));
+  try { if (localStorage.getItem('red-capa') === 'cierre') caja.querySelector('[data-capa="cierre"]').click(); } catch (e) {}
 }
 function paint() {
   const rel = new Set([cur]);
@@ -115,7 +167,7 @@ function paint() {
     el.setAttribute('marker-end', on ? 'url(#m-on)' : 'url(#m-off)');
   });
 }
-function select(id) { cur = id; imgIdx = 0; render(); try { localStorage.setItem('red-sel', id); } catch (e) {} }
+function select(id) { cur = id; imgIdx = 0; render(); try { localStorage.setItem('red-sel', id); } catch (e) {} if (location.hash.slice(1) !== id) history.replaceState(null, '', '#' + id); }
 document.querySelectorAll('.chip[data-mod]').forEach(c => c.addEventListener('click', () => {
   modFilter = c.dataset.mod;
   document.querySelectorAll('.chip[data-mod]').forEach(x => x.setAttribute('aria-pressed', x === c ? 'true' : 'false'));
@@ -124,4 +176,8 @@ document.querySelectorAll('.chip[data-mod]').forEach(c => c.addEventListener('cl
 }));
 let start = 'gs';
 try { const s = localStorage.getItem('red-sel'); if (s && byId[s]) start = s; } catch (e) {}
+const desdeHash = () => { const h = decodeURIComponent(location.hash.slice(1)); return byId[h] ? h : null; };
+if (desdeHash()) start = desdeHash();
 select(start);
+if (desdeHash()) setTimeout(() => nodeEls[start].scrollIntoView({ block: 'nearest', inline: 'center' }), 60);
+window.addEventListener('hashchange', () => { const h = desdeHash(); if (h && h !== cur) { select(h); nodeEls[h].scrollIntoView({ block: 'nearest', inline: 'center' }); } });
