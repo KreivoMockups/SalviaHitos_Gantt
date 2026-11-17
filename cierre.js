@@ -138,7 +138,7 @@ const CIERRE = {
     ['ca-desp6', ['ca'], 'Despliegue de la semana 6 y congelamiento en la semana 7', 6, 7, 'plan', [], ['A', 'B', 'C'], '', '', ['despliegue']],
     ['ca-discap', ['ca'], 'Ajustes de discapacidad: si SALVIA no define la ruta, se documenta como evolución futura', 3, 7, 'cliente', [], [], '', '', []],
 
-    ['ap-poliza', ['ap'], 'Confirmar que FONIGUALDAD aprobó la póliza actualizada por la prórroga', 1, 1, 'confirmar', [], [], '', 'El plazo de 2 días hábiles venció el 28-oct. Sin póliza aprobada no hay desembolsos.', []],
+    ['ap-poliza', ['ap'], 'Póliza actualizada por la prórroga (Otrosí 1)', 1, 2, 'hecho', [], [], '', 'Anexo de modificación expedido por Seguros Mundial el 6-nov-2026.', []],
     ['ap-mesa', ['ap'], 'Mesa de diseño de Hombres y Estabilización', 3, 3, 'porhacer', [], ['C'], '', 'Estaba prevista para la semana 3.', []],
     ['ap-viernes', ['ap'], 'Cada viernes: malla, tablero, horas contra el tope de unas 85 h por semana y registro de decisiones del cliente', 1, 8, 'curso', [], [], '', '', []],
     ['ap-h11', ['ap'], 'Documentación para la DNDA, publicación final en Google Play y entrega del código fuente (H11)', 7, 9, 'plan', [], [], '', '', ['doc']]
@@ -195,7 +195,7 @@ const CIERRE = {
     ['En revisión', 'build', '57 issues en Jira, 52 de octubre. De noviembre: envío al mecanismo, recomendaciones guardadas, tareas del flujo de Medidas de Juan, usuario de entidad desde el administrador y QA de entidades y usuarios.'],
     ['Por hacer', 'warn', 'Nueve tareas nuevas de noviembre y las 12 de Registro V3 y Reporte V2 del Sprint 22, abiertas en Jira aunque sus horas ya se reportaron.'],
     ['Sin tareas en Jira', 'risk', 'Núcleo y bandeja de la Alerta inminente, activación de rutas, filtro de casos a escalar, expediente unificado, registro de familiares y guiones de prueba. Son el camino crítico de las semanas 4 a 6.'],
-    ['Por confirmar', 'warn', 'Despliegue a main de la semana 2, aprobación de la póliza y las decisiones de SALVIA de la semana 1 distintas de las dos validadas.']
+    ['Por confirmar', 'warn', 'Despliegue a main de la semana 2 y las decisiones de SALVIA de la semana 1 distintas de las dos validadas.']
   ],
 
   horas: { restantes: 597.5, b1: 127.5, b2: 470, porSemana: 85, corte: '31-oct', octubre: 584.5, reprocesosOct: 215 },
@@ -208,7 +208,7 @@ const CIERRE = {
     M3: 'El flujo de remisiones ya está en testing, pero el tablero aún no lo cuenta; criterios de aceptación sin aprobar; familiares sin historias de usuario',
     APP: 'Google Play con directorio, sincronización, Línea 155 y botón de alerta. Faltan bitácora web, manual, video y QA; App Store sin decisión',
     H06: 'Casos migrados con formularios vacíos (SEG-01, SEG-02)',
-    H07: 'Aprobación de la póliza actualizada; actas de aceptación del cierre',
+    H07: 'Póliza actualizada (anexo del 6-nov); faltan las actas de aceptación del cierre',
     H08: 'Sin UAT formal; estrés, seguridad y accesibilidad pendientes',
     H09: 'Despliegue de la semana 2 por confirmar',
     H10: 'Manuales de usuario en curso; videos y capacitaciones con Línea 155 y gestoras',
@@ -233,7 +233,6 @@ const CIERRE = {
     ['Alerta inminente a medias', 'Cuatro pantallas por construir y ninguna tarea en Jira al 13-nov', 'Un solo componente reutilizable, integrado por Andrés Felipe; QA la prueba en las cuatro franjas'],
     ['Sobrecarga de personas', 'Brayan con tres líneas y la documentación; Juan y Santiago con Medidas y otra línea', 'Medidas va primero (S1 a S4); los arreglos de QA se reparten según capacidad'],
     ['Decisiones del cliente tardías', 'Criterios de Medidas sin aprobar; seis hallazgos de Rutas sin definir', 'Cinco días hábiles por decisión; sin respuesta, se construye la opción más simple y queda en acta'],
-    ['Póliza sin actualizar', 'Plazo de 2 días hábiles vencido el 28-oct', 'Sin póliza aprobada no hay desembolsos; confirmar su aprobación'],
     ['Alcance que crece', 'Hombres, Estabilización y discapacidad en ideación', 'Sin diseño aprobado al inicio de su línea, pasan a evolución futura'],
     ['Reprocesos que consumen el cierre', '215 h de reprocesos en octubre, cerca del 42 % del esfuerzo de desarrollo', 'Se registran en la Bolsa 3 cada viernes; solo se corrige lo que bloquea una de las tres historias']
   ]
