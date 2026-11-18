@@ -1,12 +1,13 @@
 /* Plan de cierre SALVIA (Instrucciones de cierre v1.2, corte 13-nov-2026).
    Une las tareas del plan con las pantallas de la Red de acción (ids de N en datos.js).
+   Ajustado el 18-nov-2026 con las capturas del servidor de pruebas (25 pantallas, 11 roles) y la póliza expedida.
    Para actualizar: cambie el estado de una tarea o de una pantalla y suba este archivo.
    Estados de tarea: hecho, revision, curso, porhacer, sintarea, cliente, confirmar, plan.
    Estados de pantalla en el cierre: prod, testing, revision, parcial, pendprod, sintarea, mock. */
 const CIERRE = {
   version: '1.2',
   corte: '13-nov-2026',
-  fuentes: 'Tablero de hitos (corte 10-nov), Jira al 13-nov (Sprints 22 a 24) y Red de acción',
+  fuentes: 'Tablero de hitos (corte 10-nov), Jira al 13-nov (Sprints 22 a 24), Red de acción y capturas del servidor de pruebas al 18-nov (25 pantallas, 11 roles)',
 
   semanas: [
     ['S1', '2026-10-26', '2026-10-31', 'Desarrollo'], ['S2', '2026-11-02', '2026-11-07', 'Desarrollo · despliegue 1'],
@@ -46,16 +47,16 @@ const CIERRE = {
     mtar: ['prod', 'En producción.'],
     lid: ['mock', 'Falta definir qué datos de la víctima puede ver la lideresa.'],
     rps: ['prod', 'En producción.'],
-    mps: ['prod', 'En producción. Botón de intento de contacto del 3x3 en testing; formularios definitivos por hacer.'],
-    met: ['testing', 'Pantallas de remisión, detalle y revisión del Equipo Técnico en testing (Sprint 22).'],
-    msup: ['testing', 'Asignación del agente de medidas en testing (Sprint 22); la revisión de la caracterización está en las tareas de Juan.'],
-    mag: ['parcial', 'Contacto 3x3 sin límite de intentos en testing; caracterización en revisión y su visibilidad por hacer.'],
-    mcon: ['revision', 'Trazabilidad y aprobación de cotizaciones dentro de las tareas de Medidas en revisión.'],
-    cruz: ['parcial', 'Escalamiento y entrega de la medida inmediata en testing; cotizaciones y medidas otorgadas en revisión.'],
-    not: ['prod', 'En producción.'],
-    mbar: ['prod', 'En producción. Envío al mecanismo y recomendaciones guardadas en revisión; acciones del enlace fuera de la línea de tiempo por hacer.'],
+    mps: ['prod', 'En producción. Botón de intento de contacto del 3x3 en testing; Mis remisiones y calendario por dupla confirmados con los roles ps y ts (18-nov); formularios definitivos por hacer.'],
+    met: ['testing', 'Pantallas de remisión, detalle y revisión del Equipo Técnico en testing (Sprint 22). La bandeja de remisiones ya trae la ventana «Revisión Equipo Técnico»; falta un usuario del rol te para probarla.'],
+    msup: ['testing', 'Asignación y reasignación en bloque con recomendación confirmadas en testing con los roles sv y sm (18-nov); la revisión de la caracterización está en las tareas de Juan.'],
+    mag: ['parcial', 'Contacto 3x3 sin límite de intentos en testing y bandeja del agente confirmada con el rol am (18-nov). Caracterización en revisión; la página de detalle usa el componente caracterizacion-view sin cargar su archivo (PSWYA-916).'],
+    mcon: ['testing', 'Bandeja de la Supervisión del Convenio confirmada en testing con el rol sc (18-nov). Trazabilidad y aprobación de cotizaciones en revisión; falta capturar el detalle de la remisión con este rol.'],
+    cruz: ['testing', 'Bandeja de Cruz Roja confirmada en testing con el rol cr (18-nov); escalamiento y entrega de la medida inmediata en testing. Cotizaciones y medidas otorgadas en revisión; falta capturar el detalle de la remisión con este rol.'],
+    not: ['prod', 'En producción. Pestaña «Mis oficios» y filtros por agente confirmados con el rol an (18-nov); la aprobación previa de solicitudes de Mi SALVIA (hallazgo 119) no aparece.'],
+    mbar: ['prod', 'En producción. Envío al mecanismo y recomendaciones guardadas en revisión; acciones del enlace fuera de la línea de tiempo por hacer. Mis barreras del enlace recibe también solicitudes de mesa técnica.'],
     ment: ['revision', 'Gestión de la medida por el enlace dentro de las tareas de Medidas en revisión.'],
-    cent: ['pendprod', 'Pendiente de producción. Respuesta de la entidad validada con SALVIA (2-nov); usuario creado desde el administrador en revisión.'],
+    cent: ['testing', 'Casos Entidad y Mis acciones institucionales confirmados en testing con el rol et (18-nov): pendientes y completadas, «Relación con entidad», radicado o NUNC; tarjetas con «Objetivo» y «Solicitud». Falta el paso a producción; usuario creado desde el administrador en revisión.'],
     cmec: ['pendprod', 'Pendiente de producción. El caso llega al mecanismo al gestionar la alerta por barreras (en revisión).'],
     dir: ['prod', 'En producción. QA de creación de entidades y usuarios en revisión; entidades nacionales y departamentales por revisar.']
   },
@@ -100,7 +101,7 @@ const CIERRE = {
     ['br-validar', ['br'], 'Validar con SALVIA dónde quedan las recomendaciones del equipo técnico y la respuesta de las entidades en Mis acciones institucionales', 1, 3, 'hecho', ['mbar', 'cent'], ['A'], 'PSWYA-892 y 894', 'Validado el 2-nov.', ['qa']],
     ['br-qa-barreras', ['br'], 'QA de asignaciones y alertas por barreras', 2, 3, 'hecho', ['mseg', 'mbar'], ['A'], 'PSWYA-909', 'Completado el 9-nov.', ['qa']],
     ['br-qa-entidades', ['br'], 'QA de creación de entidades y usuarios', 3, 4, 'revision', ['dir', 'cent'], ['A'], 'PSWYA-911', '', ['qa']],
-    ['br-qa-medidas', ['br'], 'QA del flujo de Medidas de Emergencia', 3, 4, 'porhacer', ['met', 'msup', 'mag', 'cruz'], ['B'], 'PSWYA-910', '', ['qa']],
+    ['br-qa-medidas', ['br'], 'QA del flujo de Medidas de Emergencia', 3, 4, 'porhacer', ['met', 'msup', 'mag', 'mcon', 'cruz'], ['B'], 'PSWYA-910', 'Desde el 18-nov hay usuarios de prueba para sm, am, sc y cr; falta el rol te.', ['qa']],
     ['br-qa-registro', ['br'], 'QA de Reporte y Registro nuevos', 3, 4, 'porhacer', ['rep', 'mis', 'rec', 'ing', 'gs'], ['A'], 'PSWYA-805', '', ['qa']],
     ['br-docs-seg', ['br'], 'Los 11 documentos técnicos de Seguimiento (módulo al 95 %)', 1, 3, 'confirmar', ['caso', 'area', 'mseg', 'mtar'], [], '', 'Sin registro en Jira.', ['doc']],
     ['br-bandeja', ['br'], 'Bandeja de alertas por validar y casos con alerta', 4, 6, 'sintarea', ['ges', 'hist'], ['B'], '', '', ['alerta']],
@@ -110,10 +111,10 @@ const CIERRE = {
     ['jn-medidas', ['jn'], 'Medidas: caracterización, revisión del supervisor, trazabilidad y cotizaciones de la Supervisión del Convenio, gestión por el enlace y medidas otorgadas por Cruz Roja', 1, 4, 'revision', ['mag', 'msup', 'mcon', 'ment', 'cruz'], ['B'], 'PSWYA-896', '', []],
     ['jn-mecanismo', ['jn'], 'El caso llega al mecanismo al gestionar la alerta por barreras, sin redigitar datos', 2, 3, 'revision', ['mbar', 'cmec'], ['A'], 'PSWYA-890', '', []],
     ['jn-recomend', ['jn'], 'Recomendaciones del equipo técnico guardadas en Atención SALVIA', 2, 3, 'revision', ['mbar'], ['A'], 'PSWYA-891', '', []],
-    ['jn-caract', ['jn'], 'Caracterización visible en Medidas de Emergencia', 4, 4, 'porhacer', ['mag'], ['B'], 'PSWYA-916', '', []],
+    ['jn-caract', ['jn'], 'Caracterización visible en Medidas de Emergencia', 4, 4, 'porhacer', ['mag'], ['B'], 'PSWYA-916', 'La página de detalle usa caracterizacion-view sin cargar caracterizacion-view.js.', []],
     ['jn-diferenciadas', ['jn'], 'Estado de las medidas diferenciadas visible en Atención SALVIA', 4, 4, 'porhacer', ['caso', 'mag'], ['B'], 'PSWYA-917', '', []],
     ['jn-activacion', ['jn'], 'Activación de rutas desde la Alerta inminente por el agente de notificaciones', 3, 4, 'sintarea', ['act'], ['B'], '', '', ['alerta']],
-    ['jn-enlace', ['jn'], 'Enlace territorial: acciones y trazabilidad visibles fuera de la línea de tiempo', 4, 7, 'porhacer', ['mbar'], ['A'], 'PSWYA-915', '', []],
+    ['jn-enlace', ['jn'], 'Enlace territorial: acciones y trazabilidad visibles fuera de la línea de tiempo', 4, 7, 'porhacer', ['mbar'], ['A'], 'PSWYA-915', 'Mis barreras del enlace ya recibe las solicitudes de mesa técnica (captura del 18-nov).', []],
 
     ['bm-usuario', ['bm'], 'Usuario de entidad creado solo desde el Directorio de Entidades (vínculo correcto desde el administrador)', 1, 2, 'revision', ['dir', 'cent'], ['A'], 'PSWYA-887', '', []],
     ['bm-hallazgos', ['bm'], 'Seis hallazgos sin asignar de Rutas (109, 111, 112, 114, 115 y 119)', 1, 2, 'cliente', ['cent', 'dir', 'not'], ['A'], '', 'Esperan que SALVIA defina los campos.', []],
@@ -136,10 +137,10 @@ const CIERRE = {
     ['ca-desp2', ['ca'], 'Despliegue a main de la semana 2, con respaldo y plan de reversa', 2, 2, 'confirmar', ['rep', 'mis', 'rec', 'gs', 'cent', 'cmec'], ['A', 'B', 'C'], '', 'La última sincronización del repositorio (26-oct) mostraba main en el 10-sep.', ['despliegue']],
     ['ca-desp4', ['ca'], 'Despliegue de la semana 4 (16 al 21-nov): todo lo probado en testing desde el 10-sep si el de la semana 2 no se hizo', 4, 4, 'plan', ['rep', 'mis', 'rec', 'gs', 'met', 'msup', 'cent', 'cmec'], ['A', 'B', 'C'], '', '', ['despliegue']],
     ['ca-desp6', ['ca'], 'Despliegue de la semana 6 y congelamiento en la semana 7', 6, 7, 'plan', [], ['A', 'B', 'C'], '', '', ['despliegue']],
-    ['ca-discap', ['ca'], 'Ajustes de discapacidad: si SALVIA no define la ruta, se documenta como evolución futura', 3, 7, 'cliente', [], [], '', '', []],
+    ['ca-discap', ['ca'], 'Ajustes de discapacidad: si SALVIA no define la ruta, se documenta como evolución futura', 3, 7, 'cliente', [], [], '', 'La remisión a equipos en testing ya incluye «Discapacidad» como destino.', []],
 
-    ['ap-poliza', ['ap'], 'Póliza actualizada por la prórroga (Otrosí 1)', 1, 2, 'hecho', [], [], '', 'Anexo de modificación expedido por Seguros Mundial el 6-nov-2026.', []],
-    ['ap-mesa', ['ap'], 'Mesa de diseño de Hombres y Estabilización', 3, 3, 'porhacer', [], ['C'], '', 'Estaba prevista para la semana 3.', []],
+    ['ap-poliza', ['ap'], 'Póliza actualizada por la prórroga', 1, 2, 'hecho', [], [], '', 'Anexo de modificación expedido por Seguros Mundial el 6-nov-2026.', []],
+    ['ap-mesa', ['ap'], 'Mesa de diseño de Hombres y Estabilización', 3, 3, 'porhacer', [], ['C'], '', 'Estaba prevista para la semana 3. La remisión a equipos en testing ya lista Estabilización, Atención Hombres, Salvia Dignidad y Discapacidad.', []],
     ['ap-viernes', ['ap'], 'Cada viernes: malla, tablero, horas contra el tope de unas 85 h por semana y registro de decisiones del cliente', 1, 8, 'curso', [], [], '', '', []],
     ['ap-h11', ['ap'], 'Documentación para la DNDA, publicación final en Google Play y entrega del código fuente (H11)', 7, 9, 'plan', [], [], '', '', ['doc']]
   ],
@@ -183,7 +184,7 @@ const CIERRE = {
     ['S2', 'Ventana de despliegue a producción con respaldo, y quién valida en producción', 'Camilo', ['A', 'B', 'C'], 'abierta', '2026-11-13', [], ''],
     ['S2', 'Revisión del mockup de Registro de Familiares', 'Andrés Felipe', ['C'], 'abierta', '2026-11-13', ['bus', 'ing'], ''],
     ['S3', 'Insumos y reunión de diseño para Hombres y Estabilización; definir la ruta de discapacidad', 'Andrés Posada, Camilo', ['C'], 'abierta', '2026-11-20', [], ''],
-    ['S2–S7', 'Usuarios de prueba por rol: alcaldías piloto, mecanismo articulador, enlaces, Supervisión del Convenio y operador externo (Cruz Roja)', 'Brayan, Brandon', ['A', 'B', 'C'], 'programada', '2026-12-12', ['cent', 'cmec', 'mbar', 'mcon', 'cruz'], ''],
+    ['S2–S7', 'Usuarios de prueba por rol: alcaldías piloto, mecanismo articulador, enlaces, Supervisión del Convenio y operador externo (Cruz Roja)', 'Brayan, Brandon', ['A', 'B', 'C'], 'parcial', '2026-12-12', ['cent', 'cmec', 'mbar', 'mcon', 'cruz', 'met', 'ges', 'lid'], 'Al 18-nov hay usuarios de ro, sv, en, et, ps, ts, an, sm, am, sc y cr. Faltan mecanismo articulador, equipo técnico, abogado, administrador, agente integral, gestora y lideresa.'],
     ['S4, S5, S6', 'Una sesión de aceptación por historia (A, B y C), con acta firmada', 'Todo el equipo', ['A', 'B', 'C'], 'programada', '2026-12-05', [], 'Deben agendarse ya.'],
     ['S8', 'Capacitaciones masivas con Línea 155 y gestoras, con lista de asistencia', 'Brayan', ['A', 'B', 'C'], 'programada', '2026-12-19', [], ''],
     ['S9', 'Acta de recibo a satisfacción y validación de manuales', 'Andrés Posada', ['A', 'B', 'C'], 'programada', '2026-12-31', [], '']
@@ -195,6 +196,8 @@ const CIERRE = {
     ['En revisión', 'build', '57 issues en Jira, 52 de octubre. De noviembre: envío al mecanismo, recomendaciones guardadas, tareas del flujo de Medidas de Juan, usuario de entidad desde el administrador y QA de entidades y usuarios.'],
     ['Por hacer', 'warn', 'Nueve tareas nuevas de noviembre y las 12 de Registro V3 y Reporte V2 del Sprint 22, abiertas en Jira aunque sus horas ya se reportaron.'],
     ['Sin tareas en Jira', 'risk', 'Núcleo y bandeja de la Alerta inminente, activación de rutas, filtro de casos a escalar, expediente unificado, registro de familiares y guiones de prueba. Son el camino crítico de las semanas 4 a 6.'],
+    ['Confirmado en pruebas', 'ok', 'El 17 y 18-nov se capturaron 25 pantallas del servidor de pruebas con 11 roles: Casos Entidad y Mis acciones institucionales, las bandejas de Medidas de supervisión, agente, Supervisión del Convenio y Cruz Roja, Mis oficios y el calendario por dupla. La Alerta inminente no aparece en ningún rol.'],
+    ['Póliza', 'ok', 'Anexo de modificación de la póliza expedido por Seguros Mundial el 6-nov-2026.'],
     ['Por confirmar', 'warn', 'Despliegue a main de la semana 2 y las decisiones de SALVIA de la semana 1 distintas de las dos validadas.']
   ],
 
@@ -233,6 +236,7 @@ const CIERRE = {
     ['Alerta inminente a medias', 'Cuatro pantallas por construir y ninguna tarea en Jira al 13-nov', 'Un solo componente reutilizable, integrado por Andrés Felipe; QA la prueba en las cuatro franjas'],
     ['Sobrecarga de personas', 'Brayan con tres líneas y la documentación; Juan y Santiago con Medidas y otra línea', 'Medidas va primero (S1 a S4); los arreglos de QA se reparten según capacidad'],
     ['Decisiones del cliente tardías', 'Criterios de Medidas sin aprobar; seis hallazgos de Rutas sin definir', 'Cinco días hábiles por decisión; sin respuesta, se construye la opción más simple y queda en acta'],
+    ['Póliza sin actualizar', 'Resuelto: anexo de modificación expedido por Seguros Mundial el 6-nov', 'Archivar el anexo con los soportes de desembolso y las actas del cierre'],
     ['Alcance que crece', 'Hombres, Estabilización y discapacidad en ideación', 'Sin diseño aprobado al inicio de su línea, pasan a evolución futura'],
     ['Reprocesos que consumen el cierre', '215 h de reprocesos en octubre, cerca del 42 % del esfuerzo de desarrollo', 'Se registran en la Bolsa 3 cada viernes; solo se corrige lo que bloquea una de las tres historias']
   ]
