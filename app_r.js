@@ -83,7 +83,7 @@ function render() {
   const man = MAN[mod];
   panel.innerHTML = `
     <div class="shot"><img id="shot" src="img/${img}.jpg" alt="Pantalla ${esc(name)} (${imgIdx + 1} de ${imgs.length})" width="1100" height="720"></div>
-    <div class="shotbar"><button class="navbtn" id="prev" ${imgIdx === 0 ? 'disabled' : ''}>Anterior</button><span>Pantalla ${imgIdx + 1} de ${imgs.length} · toque para ampliar</span><button class="navbtn" id="next" ${imgIdx === imgs.length - 1 ? 'disabled' : ''}>Siguiente</button></div>
+    <div class="shotbar"><button class="navbtn" id="prev" ${imgIdx === 0 ? 'disabled' : ''}>Anterior</button><span>Pantalla ${imgIdx + 1} de ${imgs.length} · <b class="src ${img.startsWith('t_') ? 'src-t' : 'src-m'}">${img.startsWith('t_') ? 'Pruebas, 18-nov' : 'Mockup'}</b> · toque para ampliar</span><button class="navbtn" id="next" ${imgIdx === imgs.length - 1 ? 'disabled' : ''}>Siguiente</button></div>
     <h2>${esc(name)}</h2>
     <div class="tags"><span class="tag">${esc(rol)}</span><span class="tag code">${esc(code)}</span><span class="tag ${ST[st][1]}">${ST[st][0]}</span></div>
     <p class="desc">${esc(desc)}</p>
