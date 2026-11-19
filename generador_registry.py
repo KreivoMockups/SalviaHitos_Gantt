@@ -4,12 +4,16 @@ Genera registry.js para el tablero de hitos SALVIA.
 Lee dos libros:
   - Datos_Malla_SALVIA.xlsx: EDT (Plan), pertenencia de actividades a hitos, avance mensual,
     fichas por mes, meses, tareas y reglas de reparto de horas.
-  - Progreso_Horas_Salvia.xlsx (opcional): hoja TimeLogs con las horas registradas.
-    Si no está, el tablero se genera sin horas por hito (solo con las horas por mes de la hoja Meses).
+  - Progreso_Horas_Salvia.xlsx o SALVIA_Project_Management.xlsx (obligatorio): hoja TimeLogs con las
+    horas registradas. De ahí salen las horas por mes, por hito y por actividad. Sin él, el script se detiene.
 
-Uso:  python generador_registry.py
+Uso, en este orden y en la carpeta del repositorio:
+  python generador_registry.py     (horas por mes y por hito desde TimeLogs)
+  python agregar_reprocesos.py     (Bolsa 3 y horas cobrables, desde la hoja Reprocesos de la malla)
 """
 import json
+import os
+import sys
 import re
 import zipfile
 import xml.etree.ElementTree as ET
@@ -22,6 +26,11 @@ import pandas as pd
 # ==========================================
 ARCHIVO_EXCEL = 'Datos_Malla_SALVIA.xlsx'
 ARCHIVO_HORAS = 'Progreso_Horas_Salvia.xlsx'
+# Si no está ese archivo, sirve la exportación del proyecto con la misma hoja TimeLogs
+for _alt in ('Progreso_Horas_Salvia.xlsx', 'SALVIA_Project_Management.xlsx'):
+    if os.path.exists(_alt):
+        ARCHIVO_HORAS = _alt
+        break
 HOJA_HORAS = 'TimeLogs'
 ARCHIVO_SALIDA = 'registry.js'
 
@@ -252,7 +261,9 @@ def generar_registry():
             print(f"Aviso: {sin_hito} horas no quedaron asignadas a ningún hito. Revisa la hoja Reglas_Hito.")
         horas_fuente = f"{ARCHIVO_HORAS} (hoja {HOJA_HORAS})"
     except FileNotFoundError:
-        print(f"Aviso: no se encontró {ARCHIVO_HORAS}; se usan solo las horas por mes de la hoja Meses.")
+        sys.exit(f"Error: no se encontró {ARCHIVO_HORAS} (hoja {HOJA_HORAS}) en esta carpeta. Sin ese archivo el tablero "
+                 "queda sin horas por hito ni por mes. Copia Progreso_Horas_Salvia.xlsx o SALVIA_Project_Management.xlsx "
+                 "junto a este script y vuelve a correrlo; registry.js no se modificó.")
 
     # ---------- contrato ----------
     contrato = {'b1': 3744, 'b2': 1652}
